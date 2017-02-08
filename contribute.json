@@ -1,0 +1,9 @@
+{
+  "name": "braingames",
+  "description": "Games for Brains and Scientists",
+  "repository": {
+    "url": "https://github.com/mozilla/braingames/",
+    "license": "MPL 2.0",
+    "tests": "https://travis-ci.org/mozilla/braingames/"
+  }
+}
