@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     # Third party apps
     'django_jinja',
+    'jquery',
 
     # Django apps
     'django.contrib.admin',
