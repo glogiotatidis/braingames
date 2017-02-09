@@ -84,3 +84,9 @@ configparser==3.5.0 \
 django-jquery==3.1.0 \
     --hash=sha256:414ac1083708ac71cc771612e7287702c939d06cd357fd53bb1271a4f6255115 \
     --hash=sha256:e7e2ac14234bac26be937e448d94efd6d37ee2f3cdbaa2def3c8e74c2afb2b9a
+django-import-export==0.5.1 \
+    --hash=sha256:5a932117a082971250703dec1ffcb6a92f913c393ef87b53331ee812b2b2fd4e
+tablib==0.11.4 \
+    --hash=sha256:3eed36e7d161058a487eee4a208dc5adefeb12790bb6e646fa6fcf0e353208e2
+diff-match-patch==20121119 \
+    --hash=sha256:9dba5611fbf27893347349fd51cc1911cb403682a7163373adacc565d11e2e4c

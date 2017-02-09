@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.contrib import admin
 
 import session_csrf
 
@@ -8,6 +9,9 @@ class BaseAppConfig(AppConfig):
 
     def ready(self):
         # The app is now ready. Include any monkey patches here.
+
+        admin.site.site_header = 'Brain Games Administration'
+        admin.site.site_title = 'Mozilla Brain Games'
 
         # Monkey patch CSRF to switch to session based CSRF. Session
         # based CSRF will prevent attacks from apps under the same
