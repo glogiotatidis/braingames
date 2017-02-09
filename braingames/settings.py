@@ -166,3 +166,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = config('SECURE_CONTENT_TYPE_NOSNIFF', default=True
 # This is the bottom of settings.py
 if 'test' in sys.argv[1:2]:
     SECURE_SSL_REDIRECT = False
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'braingames.base.finders.GameFinder',
+]
