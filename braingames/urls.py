@@ -8,6 +8,7 @@ from braingames.base import views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
+    url(r'^game/(?P<game>[\w-]+)/$', views.game, name='game'),
     url(r'^admin/', include(admin.site.urls)),
 
     # contribute.json url

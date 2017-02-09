@@ -103,10 +103,15 @@ MEDIA_URL = config('MEDIA_URL', '/media/')
 
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=not DEBUG, cast=bool)
 
+GAMES_DIRECTORY = os.path.join(ROOT, 'games')
+
 TEMPLATES = [
     {
         'BACKEND': 'django_jinja.backend.Jinja2',
         'APP_DIRS': True,
+        'DIRS': [
+            GAMES_DIRECTORY,
+        ],
         'OPTIONS': {
             'match_extension': '.jinja',
             'newstyle_gettext': True,
