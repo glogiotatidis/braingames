@@ -13,9 +13,9 @@ class ResultResource(resources.ModelResource):
 
 class ResultAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = ResultResource
-    list_display = ('id', 'game')
-    list_filter = ('game',)
-    readonly_fields = ('game', 'data')
+    list_display = ('id', 'game', 'created')
+    list_filter = ('game', 'created')
+    readonly_fields = ('game', 'created', 'data')
     list_display_links = ('id', 'game')
 
 
