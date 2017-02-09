@@ -50,3 +50,12 @@ def datacollector(request, game):
     Result.objects.create(game=game, data=request.POST['json'])
 
     return HttpResponse('OK')
+
+
+def list_games(request):
+    games = []
+    for item in os.scandir(settings.GAMES_DIRECTORY):
+        if item.is_dir():
+            games.append(item.name)
+
+    return render(render, 'braingames/list_games.jinja', {'games': games})
