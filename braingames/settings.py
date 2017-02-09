@@ -62,7 +62,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'csp.middleware.CSPMiddleware',
 )
 
 ROOT_URLCONF = 'braingames.urls'
@@ -133,40 +132,6 @@ TEMPLATES = [
         }
     },
 ]
-
-# Django-CSP
-CSP_DEFAULT_SRC = (
-    "'self'",
-)
-CSP_FONT_SRC = (
-    "'self'",
-    'http://*.mozilla.net',
-    'https://*.mozilla.net',
-    'http://*.mozilla.org',
-    'https://*.mozilla.org',
-)
-CSP_IMG_SRC = (
-    "'self'",
-    'http://*.mozilla.net',
-    'https://*.mozilla.net',
-    'http://*.mozilla.org',
-    'https://*.mozilla.org',
-)
-CSP_SCRIPT_SRC = (
-    "'self'",
-    'http://*.mozilla.org',
-    'https://*.mozilla.org',
-    'http://*.mozilla.net',
-    'https://*.mozilla.net',
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    "'unsafe-inline'",
-    'http://*.mozilla.org',
-    'https://*.mozilla.org',
-    'http://*.mozilla.net',
-    'https://*.mozilla.net',
-)
 
 # This is needed to get a CRSF token in /admin
 ANON_ALWAYS = True
