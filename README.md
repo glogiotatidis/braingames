@@ -4,6 +4,76 @@
 
 A set of brain games
 
-## Develop
+## Game Development
+
+Each game must have it's own directory under the [`games`](games/) folder. The
+name of the directory serves as game URL, e.g. the game inside directory
+`foobar` can be loaded via `/game/foobar/` URL.
+
+In each directory *must* contain a template named `game.jinja`. The template
+*must* extend `braingames/basegame.jinja` and will the game Javascript code must
+go in `game_script` block. For convenience instead of adding Javascript code
+inside the `game_script` block you can `include` a Javascript file.
+See [`example-game`](games/example_game/game.jinja).
+
+Note:
+ - If you rename a directory game URL will change.
+ - If you delete a directory game will no longer be available but the collected
+   experiment data will remain in the database.
+
+### Collecting the results
+
+Each game has its own data collection endpoint under the `datacollector/` URL,
+for example `game/example-game/datacollector`. The view is expecting a POST via
+an Ajax Request with JSON data in the body. You can use the following code to
+post data.
+
+```javascript
+var csrf = "{% csrf_token %}";
+jsPsych.init({
+    timeline: timeline,
+    on_finish: function() {
+        $.ajax({
+            type: 'post',
+            cache: false,
+            url: 'datacollector/',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            headers: {
+                'X-CSRFToken': '{{  csrf_token }}'
+            },
+            data: jsPsych.data.dataAsJSON(),
+            success: function(output) { console.log(output); }
+        });
+    }
+});
+```
+
+Do not forget to set the `csrf_token` as shown.
+
+## Getting the results from the Database
+
+Login into Django Admin (`/admin/`) and select `Results`. You can optionally
+filter the results to a game and/or a time period using the filters on the
+right. Click the `Export` button on the upper right when you 're done filtering
+to download the results.
+
+## Application Development
+
+You'll need Python 3, virtualenv and sqlite3.
+
+ 1. Setup virtualenv
+ 2. Install packages from `requirements.txt`
+ 3. Configure app by copying and optionally editing `.env-example` to `.env`.
+ 4. Develop!
 
 ## Deployment
+
+This app runs on Heroku. Commits to `mozilla/braingames` `master` branch get
+automatically deployed
+to [`moz-braingames-stage`](https://moz-braingames-stage.herokuapp.com) if the
+Travis-CI tests pass.
+
+Via the Heroku UI and the `moz-braingames` pipeline releases can be promoted
+from Staging to Production
+at [`moz-braingames`](https://moz-braingames.herokuapp.com).
