@@ -1,61 +1,46 @@
 import json
 import os
 from functools import partial
-from urllib.parse import urljoin
-
-from django.conf import settings
-from django.http import (Http404, HttpResponse,
-                         HttpResponseBadRequest, HttpResponseRedirect)
+from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
-from django.contrib.staticfiles.storage import staticfiles_storage
+from django.views.decorators.http import require_POST
 
-from session_csrf import anonymous_csrf
-
+from braingames.base import utils
 from braingames.base.models import Result
 
 
-@anonymous_csrf
 def home(request):
     return render(request, 'braingames/home.jinja')
 
 
-def gamestatic(game, path):
-    path = urljoin('games/{}/'.format(game), path)
-    return staticfiles_storage.url(path)
-
-
 def game(request, game):
-    for item in os.scandir(settings.GAMES_DIRECTORY):
-        if item.is_dir() and item.name == game:
-            break
-    else:
-        item = None
-
-    if not item:
+    if game not in utils.list_games():
         raise Http404('Game does not exist')
 
-    template = os.path.join(item.name, 'game.jinja')
-    return render(request, template, {'gamestatic': partial(gamestatic, item.name)})
+    template = os.path.join(game, 'game.jinja')
+    return render(request, template, {'gamestatic': partial(utils.gamestatic, game)})
 
 
+@require_POST
 def datacollector(request, game):
-    if not request.is_ajax or not request.POST:
-        return HttpResponseRedirect('/')
+    if not request.is_ajax() or not request.body:
+        return HttpResponseBadRequest('Invalid request.')
+
+    if game not in utils.list_games():
+        return HttpResponseBadRequest('Invalid game.')
+
+    data = request.body.decode('utf-8')
 
     try:
-        json.loads(request.POST['json'])
+        json.loads(data)
     except ValueError:
-        return HttpResponseBadRequest('Not valid JSON data.')
+        return HttpResponseBadRequest('Invalid JSON data.')
 
-    Result.objects.create(game=game, data=request.POST['json'])
+    Result.objects.create(game=game, data=data)
 
     return HttpResponse('OK')
 
 
 def list_games(request):
-    games = []
-    for item in os.scandir(settings.GAMES_DIRECTORY):
-        if item.is_dir():
-            games.append(item.name)
-
+    games = utils.list_games()
     return render(render, 'braingames/list_games.jinja', {'games': games})
