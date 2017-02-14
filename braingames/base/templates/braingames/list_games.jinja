@@ -1,0 +1,9 @@
+{% extends "braingames/base.jinja" %}
+
+{% block body %}
+  <ol>
+    {% for game in games %}
+      <li> <a href="{{ url('game', game) }}">{{ game }}</a> </li>
+    {% endfor %}
+  </ol>
+{% endblock %}
