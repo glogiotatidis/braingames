@@ -99,3 +99,6 @@ django-extensions==1.7.6 \
 six==1.10.0 \
     --hash=sha256:0ff78c403d9bccf5a425a6d31a12aa6b47f1c21ca4dc2573a7e2f32a97335eb1 \
     --hash=sha256:105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a
+django-redis==4.7.0 \
+    --hash=sha256:81854d55fcf3e1ff7f4b3685f3d26173e2cec4e358cb9190862dd164d1eede7b
+redis==2.10.3 --hash=sha256:a4fb37b02860f6b1617f6469487471fd086dd2d38bbce640c2055862b9c4019c
