@@ -2,6 +2,11 @@
 
 {% block page_title %}mozilla braingames - Demo game 1{% endblock %}
 
+{% block header %}
+  {{ super() }}
+  <script src="{{ static('js/plugins/jspsych-single-stim.js') }}"></script>
+{% endblock %}
+
 {% block game_script %}
   {% include 'example-game/game.js' %}
 {% endblock %}
