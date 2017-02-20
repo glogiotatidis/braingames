@@ -13,10 +13,10 @@ class GameFinder(FileSystemFinder):
 
         for item in os.scandir(settings.GAMES_DIRECTORY):
             if item.is_dir():
-                path = os.path.join(item.path, 'static')
-                self.locations.append(('games/{}'.format(item.name), path))
+                root = os.path.join(item.path, 'static')
+                prefix = os.path.join('games', item.name)
+                self.locations.append((prefix, root))
 
-        for prefix, root in self.locations:
-            filesystem_storage = FileSystemStorage(location=root)
-            filesystem_storage.prefix = prefix
-            self.storages[root] = filesystem_storage
+                filesystem_storage = FileSystemStorage(location=root)
+                filesystem_storage.prefix = prefix
+                self.storages[root] = filesystem_storage
