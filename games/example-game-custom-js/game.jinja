@@ -1,0 +1,15 @@
+{% extends "braingames/basegame.jinja" %}
+
+{% block page_title %}mozilla braingames - Demo game 1{% endblock %}
+
+{% block header %}
+  <link href="{{ gamestatic('css/jspsych.css') }}" rel="stylesheet" />
+  <script src="{{ gamestatic('js/jspsych.js') }}"></script>
+  <script src="{{ gamestatic('js/plugins/jspsych-single-stim.js') }}"></script>
+  <script src="{{ gamestatic('js/plugins/jspsych-text.js') }}"></script>
+  <script src="{{ gamestatic('js/plugins/jspsych-video.js') }}"></script>
+{% endblock %}
+
+{% block game_script %}
+  {% include 'example-game-custom-js/game.js' %}
+{% endblock %}
