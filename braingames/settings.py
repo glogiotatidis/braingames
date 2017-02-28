@@ -37,7 +37,6 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 INSTALLED_APPS = [
     # Project specific apps
     'braingames.base',
-    'braingames.jspsych',
 
     # Third party apps
     'django_jinja',

@@ -13,58 +13,7 @@ jsPsych.plugins["single-stim"] = (function() {
 
   var plugin = {};
 
-  jsPsych.pluginAPI.registerPreload('single-stim', 'stimulus', 'image', function(t){ return !t.is_html || t.is_html == 'undefined'});
-
-  plugin.info = {
-    name: 'single-stim',
-    description: '',
-    parameters: {
-      stimulus: {
-        type: [jsPsych.plugins.parameterType.STRING],
-        default: undefined,
-        no_function: false,
-        description: ''
-      },
-      is_html: {
-        type: [jsPsych.plugins.parameterType.BOOL],
-        default: false,
-        no_function: false,
-        description: ''
-      },
-      choices: {
-        type: [jsPsych.plugins.parameterType.KEYCODE],
-        array: true,
-        default: jsPsych.ALL_KEYS,
-        no_function: false,
-        description: ''
-      },
-      prompt: {
-        type: [jsPsych.plugins.parameterType.STRING],
-        default: '',
-        no_function: false,
-        description: ''
-      },
-      timing_stim: {
-        type: [jsPsych.plugins.parameterType.INT],
-        default: -1,
-        no_function: false,
-        description: ''
-      },
-      timing_response: {
-        type: [jsPsych.plugins.parameterType.INT],
-        default: -1,
-        no_function: false,
-        description: ''
-      },
-      response_ends_trial: {
-        type: [jsPsych.plugins.parameterType.BOOL],
-        default: true,
-        no_function: false,
-        description: ''
-      },
-
-    }
-  }
+  jsPsych.pluginAPI.registerPreload('single-stim', 'stimulus', 'image');
 
   plugin.trial = function(display_element, trial) {
 
@@ -74,26 +23,34 @@ jsPsych.plugins["single-stim"] = (function() {
     trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
 
     // set default values for the parameters
-    trial.choices = trial.choices || jsPsych.ALL_KEYS;
+    trial.choices = trial.choices || [];
     trial.response_ends_trial = (typeof trial.response_ends_trial == 'undefined') ? true : trial.response_ends_trial;
     trial.timing_stim = trial.timing_stim || -1;
     trial.timing_response = trial.timing_response || -1;
     trial.is_html = (typeof trial.is_html == 'undefined') ? false : trial.is_html;
     trial.prompt = trial.prompt || "";
 
-    var new_html = '';
+    // this array holds handlers from setTimeout calls
+    // that need to be cleared if the trial ends early
+    var setTimeoutHandlers = [];
+
     // display stimulus
     if (!trial.is_html) {
-      new_html = '<img src="'+trial.stimulus+'" id="jspsych-single-stim-stimulus"></img>';
+      display_element.append($('<img>', {
+        src: trial.stimulus,
+        id: 'jspsych-single-stim-stimulus'
+      }));
     } else {
-      new_html = '<div id="jspsych-single-stim-stimulus">'+trial.stimulus+'</div>';
+      display_element.append($('<div>', {
+        html: trial.stimulus,
+        id: 'jspsych-single-stim-stimulus'
+      }));
     }
 
-    // add prompt
-    new_html += trial.prompt;
-
-    // draw
-    display_element.innerHTML = new_html;
+    //show prompt if there is one
+    if (trial.prompt !== "") {
+      display_element.append(trial.prompt);
+    }
 
     // store response
     var response = {
@@ -105,7 +62,9 @@ jsPsych.plugins["single-stim"] = (function() {
     var end_trial = function() {
 
       // kill any remaining setTimeout handlers
-      jsPsych.pluginAPI.clearAllTimeouts();
+      for (var i = 0; i < setTimeoutHandlers.length; i++) {
+        clearTimeout(setTimeoutHandlers[i]);
+      }
 
       // kill keyboard listeners
       if (typeof keyboardListener !== 'undefined') {
@@ -119,8 +78,10 @@ jsPsych.plugins["single-stim"] = (function() {
         "key_press": response.key
       };
 
+      //jsPsych.data.write(trial_data);
+
       // clear the display
-      display_element.innerHTML = '';
+      display_element.html('');
 
       // move on to the next trial
       jsPsych.finishTrial(trial_data);
@@ -131,7 +92,7 @@ jsPsych.plugins["single-stim"] = (function() {
 
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
-      display_element.querySelector('#jspsych-single-stim-stimulus').className += ' responded';
+      $("#jspsych-single-stim-stimulus").addClass('responded');
 
       // only record the first response
       if (response.key == -1) {
@@ -144,7 +105,7 @@ jsPsych.plugins["single-stim"] = (function() {
     };
 
     // start the response listener
-    if (trial.choices != jsPsych.NO_KEYS) {
+    if (JSON.stringify(trial.choices) != JSON.stringify(["none"])) {
       var keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: after_response,
         valid_responses: trial.choices,
@@ -156,16 +117,18 @@ jsPsych.plugins["single-stim"] = (function() {
 
     // hide image if timing is set
     if (trial.timing_stim > 0) {
-      jsPsych.pluginAPI.setTimeout(function() {
-        display_element.querySelector('#jspsych-single-stim-stimulus').style.visibility = 'hidden';
+      var t1 = setTimeout(function() {
+        $('#jspsych-single-stim-stimulus').css('visibility', 'hidden');
       }, trial.timing_stim);
+      setTimeoutHandlers.push(t1);
     }
 
     // end trial if time limit is set
     if (trial.timing_response > 0) {
-      jsPsych.pluginAPI.setTimeout(function() {
+      var t2 = setTimeout(function() {
         end_trial();
       }, trial.timing_response);
+      setTimeoutHandlers.push(t2);
     }
 
   };
