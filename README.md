@@ -60,12 +60,21 @@ to download the results.
 
 ## Application Development
 
-You'll need Python 3, virtualenv and sqlite3.
+You'll need Python 3, virtualenv and sqlite3:
 
  1. Setup virtualenv
  2. Install packages from `requirements.txt`
  3. Configure app by copying and optionally editing `.env-example` to `.env`.
  4. Develop!
+
+
+Alternatively you can use [Docker](http://docker.com/):
+
+ 1. pip install docker-compose
+ 2. Configure app by copying and optionally editing `.env-example` to `.env`.
+ 3. docker-compose up
+ 4. Develop!
+
 
 ## Deployment
 
