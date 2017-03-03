@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.contrib import admin
+from django.core.cache import cache
 
 import session_csrf
 
@@ -20,3 +21,6 @@ class BaseAppConfig(AppConfig):
         # library. See also
         # https://github.com/mozilla/sugardough/issues/38
         session_csrf.monkeypatch()
+
+        # Clear games cache
+        cache.delete('games')
