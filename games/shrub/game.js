@@ -14,7 +14,7 @@ timeline.push(welcome_block);
 
 var instructions_block = {
 type: "text",
-text: "<p>On each trial of this experiment you will see videos of web pages loading back-to-back in two different browsers.</p>" + 
+text: "<p>On each trial of this experiment you will see videos of web pages loading back-to-back in two different browsers.</p>" +
       "<p>Please pay close attention to how quickly the two pages load - one browser <i>may</i> load the page more quickly than the other.</p>" +
       "<p>After each pair of videos has played, please click one of three buttons indicating which browser, <i>if either,</i> loaded the page fastest - OR that there was no difference.</p>" +
       "<p>Error tones are provided for feedback when your judgment is incorrect. You are permitted a short practice block of trials before we begin keeping score.</p>" +
@@ -110,7 +110,7 @@ timeline.push({
 	stimulus: function(){
 		var first = jsPsych.data.get().last(1).values()[0].first
 		console.log(first)
-		if(first) == "Firefox" {
+		if (first == "Firefox") {
 			return "{{ gamestatic('img/FirefoxFirst.png')}}"
 		} else {
 			return "{{ gamestatic('img/ChromeFirst.png')}}"
@@ -125,7 +125,7 @@ timeline.push({
     // check accuracy
     jsPsych.data.addDataToLastTrial({ correct: data.button_pressed == data.correct_choice })
     console.log("correct: "+data.correct)
-    // tally points    
+    // tally points
   }
 });
 // error tone feedback
@@ -147,7 +147,7 @@ timeline.push({
   timing_response: 500,
   response_ends_trial: false
 });
-
+}
 // // generate a random subject ID
 // var subject_id = Math.floor(Math.random()*100000);
 // // if using heartbeat I'd want to use clientId here, grabbed as url var
@@ -165,33 +165,34 @@ timeline.push({
 
 var csrf = "{% csrf_token %}";
 jsPsych.init({
-timeline: timeline,
-fullscreen: true,
-show_progress_bar: true,
-on_trial_start: function() {
-  // get timestamp
-  jsPsych.data.addDataToLastTrial({ trialStart: Date.now() })
-//      console.log("correct: "+data.trialStart) 
-},
-on_trial_finish: function () {
-  // get timestamp
-  jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() })
-//      console.log("correct: "+data.trialFinish)        
-},
-// on_data_update: function(data){ console.log(JSON.stringify(data))},
-on_finish: function() {
-  jsPsych.data.displayData();
-  $.ajax({
-    type: 'post',
-    cache: false,
-    url: 'datacollector/',
-    contentType: 'application/json; charset=utf-8',
-    dataType: 'json',
-    headers: {
-        'X-CSRFToken': '{{  csrf_token }}'
-    },
-    data: jsPsych.data.dataAsJSON(),
-    success: function(output) { console.log(output); }
-  });
-}
+  timeline: timeline,
+  fullscreen: true,
+  show_progress_bar: true,
+  on_trial_start: function() {
+    // get timestamp
+    jsPsych.data.addDataToLastTrial({ trialStart: Date.now() })
+    //      console.log("correct: "+data.trialStart)
+  },
+  on_trial_finish: function () {
+    // get timestamp
+    jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() })
+    //      console.log("correct: "+data.trialFinish)
+  },
+
+  // on_data_update: function(data){ console.log(JSON.stringify(data))},
+  on_finish: function() {
+    jsPsych.data.displayData();
+    $.ajax({
+      type: 'post',
+      cache: false,
+      url: 'datacollector/',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      headers: {
+          'X-CSRFToken': '{{  csrf_token }}'
+      },
+      data: jsPsych.data.dataAsJSON(),
+      success: function(output) { console.log(output); }
+    });
+  },
 });
