@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo $SOURCE_VERSION > static/revision.txt
