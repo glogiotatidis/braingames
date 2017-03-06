@@ -84,8 +84,6 @@ jsPsych.plugins.video = (function() {
     }
     video_html +="</video>"
 
-    console.log(video_html)
-
     display_element.innerHTML += video_html;
 
     //show prompt if there is one

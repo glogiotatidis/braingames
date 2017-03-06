@@ -26,127 +26,121 @@ timeline.push(instructions_block);
 // static fixation cross
 // (may not end up using in timeline)
 var fixation = {
-type: 'single-stim',
-stimulus: "{{ gamestatic('img/fixation.png') }}",
-timing_stim: 500,
-timing_response: 500,
-choices: 'none'
+  type: 'single-stim',
+  stimulus: "{{ gamestatic('img/fixation.png') }}",
+  timing_stim: 500,
+  timing_response: 500,
+  choices: 'none'
 };
 
 // specify all stimuli and levels of related IVs
 // TODO how to preload video files and still pass relative paths that jsPsych expects?
 // ps I sorta hate editing this, would rather see it in a spreadsheet?
 var video_clips = [
-{sources:["{{ gamestatic('vid/C_1_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 1, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_1_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 1, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_1_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 1, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/C_1_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 1, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/C_1_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 1, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/C_2_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 2, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_2_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 2, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_2_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 2, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/C_2_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 2, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/C_2_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 2, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/C_3_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 3, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_3_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 3, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_3_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 3, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/C_3_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 3, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/C_3_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 3, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/C_4_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 4, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_4_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 4, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_4_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 4, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/C_4_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 4, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/C_4_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 4, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/C_5_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 5, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_5_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 5, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/C_5_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 5, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/C_5_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 5, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/C_5_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 5, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_1_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 1, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_1_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 1, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_1_same.mp4') }}"],  data: [{first: 'Firefox', clip: 1, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/F_1_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 1, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_1_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 1, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_2_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 2, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_2_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 2, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_2_same.mp4') }}"],  data: [{first: 'Firefox', clip: 2, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/F_2_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 2, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_2_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 2, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_3_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 3, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_3_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 3, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_3_same.mp4') }}"],  data: [{first: 'Firefox', clip: 3, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/F_3_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 3, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_3_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 3, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_4_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 4, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_4_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 4, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_4_same.mp4') }}"],  data: [{first: 'Firefox', clip: 4, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/F_4_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 4, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_4_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 4, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_5_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 5, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_5_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 5, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
-{sources:["{{ gamestatic('vid/F_5_same.mp4') }}"],  data: [{first: 'Firefox', clip: 5, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
-{sources:["{{ gamestatic('vid/F_5_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 5, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
-{sources:["{{ gamestatic('vid/F_5_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 5, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]}
+  {sources:["{{ gamestatic('vid/C_1_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 1, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_1_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 1, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_1_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 1, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/C_1_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 1, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/C_1_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 1, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/C_2_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 2, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_2_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 2, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_2_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 2, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/C_2_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 2, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/C_2_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 2, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/C_3_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 3, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_3_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 3, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_3_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 3, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/C_3_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 3, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/C_3_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 3, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/C_4_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 4, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_4_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 4, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_4_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 4, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/C_4_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 4, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/C_4_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 4, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/C_5_lag2.mp4') }}"],  data: [{first: 'Chrome',  clip: 5, speed: 'lag2',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_5_lag1.mp4') }}"],  data: [{first: 'Chrome',  clip: 5, speed: 'lag1',  correct: 'Firefox', correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/C_5_same.mp4') }}"],  data: [{first: 'Chrome',  clip: 5, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/C_5_lead1.mp4') }}"], data: [{first: 'Chrome',  clip: 5, speed: 'lead1', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/C_5_lead2.mp4') }}"], data: [{first: 'Chrome',  clip: 5, speed: 'lead2', correct: 'Chrome',  correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_1_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 1, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_1_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 1, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_1_same.mp4') }}"],  data: [{first: 'Firefox', clip: 1, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/F_1_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 1, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_1_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 1, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_2_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 2, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_2_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 2, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_2_same.mp4') }}"],  data: [{first: 'Firefox', clip: 2, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/F_2_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 2, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_2_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 2, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_3_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 3, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_3_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 3, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_3_same.mp4') }}"],  data: [{first: 'Firefox', clip: 3, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/F_3_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 3, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_3_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 3, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_4_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 4, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_4_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 4, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_4_same.mp4') }}"],  data: [{first: 'Firefox', clip: 4, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/F_4_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 4, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_4_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 4, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_5_lag2.mp4') }}"],  data: [{first: 'Firefox', clip: 5, speed: 'lag2',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_5_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 5, speed: 'lag1',  correct: 'Chrome',  correctButton: '2'}]},
+  {sources:["{{ gamestatic('vid/F_5_same.mp4') }}"],  data: [{first: 'Firefox', clip: 5, speed: 'same',  correct: 'Same',    correctButton: '1'}]},
+  {sources:["{{ gamestatic('vid/F_5_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 5, speed: 'lead1', correct: 'Firefox', correctButton: '0'}]},
+  {sources:["{{ gamestatic('vid/F_5_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 5, speed: 'lead2', correct: 'Firefox', correctButton: '0'}]} 
 ];
 // specify here with 2nd arg how many repetitions of each trial
 var all_trials = jsPsych.randomization.repeat(video_clips, 1);
 
 // build  master timeline
 for(i=0; i<video_clips.length; i+=1){
-//    timeline.push(fixation);
-// video trial to display stimuli
-timeline.push({
-  type: 'video',
-  autoplay: true,
-  controls: false,
-  timing_post_trial: 0,
-  center_vertical: true,
-  sources: all_trials[i].sources,
-  data: all_trials[i].data
-});
-// button-response trial to collect responses
-timeline.push({
-  type: 'button-response',
-	stimulus: function(){
-		var first = jsPsych.data.get().last(1).values()[0].first
-		console.log(first)
-		if (first == "Firefox") {
-			return "{{ gamestatic('img/FirefoxFirst.png')}}"
-		} else {
-			return "{{ gamestatic('img/ChromeFirst.png')}}"
-		}
-	},
-  prompt: '<p>Which clip, if either, had a faster page-load?</p>',
-  is_html: false,
-  choices: ['The first clip.', 'Both clips were the same speed.', 'The second clip.'],
-  timing_post_trial: 0,
-  data: { correct_choice: all_trials[i].data[0].correctButton },
-  on_finish: function(data) {
-    // check accuracy
-    jsPsych.data.addDataToLastTrial({ correct: data.button_pressed == data.correct_choice })
-    console.log("correct: "+data.correct)
-    // tally points
-  }
-});
-// error tone feedback
-timeline.push({
-  type: 'single-audio',
-  stimuli: function(){
-    var correct = jsPsych.data.get().last(1).values()[0].correct
-    console.log(correct)
-    // ^this line returns nothing despite this being the form in the docs WTFFFFFFFFFF
-    if(correct){
-      console.log('correct response')
-      return "{{ gamestatic('wav/buzzer.wav') }}"
-    } else {
-      console.log('incorrect response')
-      return "{{ gamestatic('wav/buzzer.wav') }}"
+  //    timeline.push(fixation);
+  // video trial to display stimuli
+  timeline.push({
+    type: 'video',
+    autoplay: true,
+    controls: false,
+    timing_post_trial: 0,
+    center_vertical: true,
+    sources: all_trials[i].sources,
+    data: all_trials[i].data
+  });
+  // button-response trial to collect responses
+  timeline.push({
+    type: 'button-response',
+  	stimulus: function(){
+  		var first = jsPsych.data.get().last(1).values()[0][0].first
+  		if(first == "Firefox") {
+  			return "{{ gamestatic('img/FirefoxFirst.png') }}"
+  		} else {
+  			return "{{ gamestatic('img/ChromeFirst.png') }}"
+  		}
+  	},
+    prompt: '<p>Which clip, if either, had a faster page-load?</p>',
+    is_html: false,
+    choices: ['The first clip.', 'Both clips were the same speed.', 'The second clip.'],
+    timing_post_trial: 0,
+    data: { correct_choice: all_trials[i].data[0].correctButton },
+    on_finish: function(data) {
+      // check accuracy
+      jsPsych.data.addDataToLastTrial({ correct: data.button_pressed == data.correct_choice })
+      // tally points    
     }
-  },
-  is_html: true,
-  timing_response: 500,
-  response_ends_trial: false
-});
+  });
+  // error tone feedback
+  timeline.push({
+    type: 'single-audio',
+    stimulus: function(){
+      var correct = jsPsych.data.get().last(1).values()[0].correct;
+      if(correct){
+        return "{{ gamestatic('wav/silence.mp3') }}"
+      } else {
+        return "{{ gamestatic('wav/buzzer.mp3') }}"   
+      }
+    },
+    is_html: true,
+    timing_response: 500,
+    trial_ends_after_audio: true
+  });
 }
 // // generate a random subject ID
 // var subject_id = Math.floor(Math.random()*100000);
@@ -162,23 +156,24 @@ timeline.push({
 // subject: subject_id,
 // condition: condition_assignment
 // });
+var sounds = ["{{ gamestatic('wav/silence.mp3') }}", "{{ gamestatic('wav/buzzer.mp3') }}"];
 
 var csrf = "{% csrf_token %}";
 jsPsych.init({
   timeline: timeline,
   fullscreen: true,
   show_progress_bar: true,
+  audio_preload: sounds,
   on_trial_start: function() {
     // get timestamp
     jsPsych.data.addDataToLastTrial({ trialStart: Date.now() })
-    //      console.log("correct: "+data.trialStart)
+  //      console.log("correct: "+data.trialStart) 
   },
   on_trial_finish: function () {
     // get timestamp
     jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() })
     //      console.log("correct: "+data.trialFinish)
   },
-
   // on_data_update: function(data){ console.log(JSON.stringify(data))},
   on_finish: function() {
     jsPsych.data.displayData();
