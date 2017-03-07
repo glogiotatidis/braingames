@@ -1,0 +1,17 @@
+{% extends "braingames/basegame.jinja" %}
+
+{% block page_title %}Braingames - "Shrub"{% endblock %}
+
+{% block header %}
+	<link href="{{ gamestatic('css/jspsych.css') }}" rel="stylesheet" />
+	<script src="{{ gamestatic('js/jspsych.js') }}"></script>
+	<script src="{{ gamestatic('js/plugins/jspsych-text.js') }}"></script>
+	<script src="{{ gamestatic('js/plugins/jspsych-video.js') }}"></script>	
+	<script src="{{ gamestatic('js/plugins/jspsych-single-stim.js') }}"></script>
+	<script src="{{ gamestatic('js/plugins/jspsych-single-audio.js') }}"></script>  
+	<script src="{{ gamestatic('js/plugins/jspsych-button-response.js') }}"></script>
+{% endblock %}
+
+{% block game_script %}
+  {% include 'shrub/game.js' %}
+{% endblock %}
