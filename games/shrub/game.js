@@ -90,8 +90,9 @@ var fixation = {
   choices: 'none'
 };
 
-// build  master timeline
+// build trial timeline
 for(i=0; i<video_clips.length; i+=1){
+//  for(i=0; i<1; i+=1){ // DEBUG: push just 1 trial to skip to end
   // timeline.push(fixation);
   // video trial to display stimuli
   timeline.push({
@@ -156,6 +157,18 @@ for(i=0; i<video_clips.length; i+=1){
     choices: 'none'
   });
 }
+
+var debrief_block = {
+  type: "text",
+  text: "<p>On each trial of this experiment you saw videos of web pages loading back-to-back in  two different browsers.</p>" +
+        "<p>The videos were actually edited strategically from the same source to be slower or faster on different trials.</p>" +
+        "<p>We're interested in knowing whether the browser you <i>thought</i> was loading the page affected how fast it <i>seemed</i> to you.</p>" +
+        "<br>" +
+        "<p>There are a total of "+trials+" trials. At "+accY+" points for an accurate trial and "+accN+" for an error, you scored a total of "+score+"!</p>"  +
+        "<p>Please press any key to conclude.</p>",
+  timing_post_trial: 2000
+};
+timeline.push(debrief_block);
 
 // generate a random subject ID
 var subject_id = Math.floor(Math.random()*100000);
