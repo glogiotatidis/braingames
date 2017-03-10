@@ -115,7 +115,6 @@ for(i=0; i<video_clips.length; i+=1){
   			return "{{ gamestatic('img/ChromeFirst.png') }}"
   		}
   	},
-    prompt: '<p>Which clip, if either, had a faster page-load?</p>',
     is_html: false,
     choices: ['The first clip', 'Both clips were the same speed', 'The second clip'],
     timing_post_trial: 0,
