@@ -58,25 +58,31 @@ var all_trials = jsPsych.randomization.repeat(video_clips, cycles);  // specify 
 
 var timeline = [];                                                   // empty timeline .push all trials to it before .init to run study
 
-var welcome_block = {
-  type: "text",
-  text: "<p>Welcome to Shrub - a \"BrainGame\".</p>" +
-        '<p>BrainGames use research techniques from cognitive science to understand how people\'s minds work when using the web.</p>' +
-        '<p>That understanding can help provide the best quality browser experience possible, tailored around data contributed through your participation.</p>' +
-        "<p>Please press any key to continue to the instructions.</p>"
-};
-timeline.push(welcome_block);
-
-var trials = all_trials.length*cycles
+var trials = all_trials.length*cycles;
 var instructions_block = {
-  type: "text",
-  text: "<p>On each trial of this experiment you will see videos of web pages loading back-to-back in two different browsers.</p>" +
-        "<p>Please pay close attention to how quickly the two pages load - one browser <i>may</i> load the page more quickly than the other.</p>" +
-        "<p>After each pair of videos has played, please click one of three buttons indicating which browser, <i>if either,</i> loaded the page fastest - OR that there was no difference.</p>" +
-        "<p>Error tones are provided for feedback when your judgment is incorrect. You are permitted a short practice block of trials before we begin keeping score.</p>" +
-        "<p>There are a total of "+trials+" trials. At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+trials*accY+" points possible.</p>"  +
-        "<p>Please press any key to begin.</p>",
-  timing_post_trial: 2000
+  type: 'instructions',
+  pages: [   // "<p></p>",
+    "<p>Welcome to Shrub - a \"BrainGame\"</p>" +
+    "<p>BrainGames use research techniques from cognitive science<br>to better understand how our minds work when using the web</p>" +
+    "<p>That understanding can improve web experiences by<br>tailoring them around data contributed through your participation</p>" +
+    "<p>Left and right arrow keys navigate<br>back and forward through the instructions</p>",
+
+    "<p>On each trial of this experiment you will see two video clips of<br>web pages loading back-to-back in <b>different browsers</b></p>" +
+    "<p>Please pay close attention to how quickly the two pages load in the clips -<br>one browser <i>may</i> load the page more quickly than the other</p>",
+
+    "<p><u>After</u> each pair of videos has played<br>you will be asked which clip, <i>if either,</i> loaded the page <b>fastest</b></p>" +
+    "<p>The differences are very slight and can be difficult to notice</p>" +
+    "<img src='{{ gamestatic('img/instAnswer.png') }}'></img>" +
+    "<p><i>Sometimes</i> there is no difference, though<br>That option is <u>also</u> available to respond with</p>",
+    
+    "<p>Rest your index fingers on the 'F' and 'J' keys and your thumbs on the space bar</p>" +
+    "<p>Press 'f' if the 1st clip loaded faster, 'j' if the 2nd clip loaded faster,<br>or space for the trials where the clips play at the same speed</p>" +
+    "<img src='{{ gamestatic('img/instAnswer.png') }}'></img> " + " <img src='{{ gamestatic('img/keyhands.jpg') }}'></img>" + "<p>Key responses keep the trials moving along quickly</p>",
+
+    "<p>Error tones are provided for feedback when your judgment is incorrect<br><strike>You are permitted a short practice block of trials before we begin keeping score</strike></p>" +
+    "<p>There are a total of "+trials+" trials to capture enough data for us to draw conclusions<br>At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+trials*accY+" points possible</p>" +
+    "<p>The experiment begins beyond this final instruction screen, you will not be able to go backward from here<br>Please do not exit fullscreen mode or we will not be able to use your data</p>"
+  ]
 };
 timeline.push(instructions_block);
 
@@ -91,8 +97,8 @@ var fixation = {
 };
 
 // build trial timeline
-for(i=0; i<video_clips.length; i+=1){
-//  for(i=0; i<1; i+=1){ // DEBUG: push just 1 trial to skip to end
+// for(i = 0; i < video_clips.length; i += 1){
+for(i = 0; i < 1; i += 1){ // 1 trial only DEBUG
   // timeline.push(fixation);
   // video trial to display stimuli
   timeline.push({
@@ -143,10 +149,12 @@ for(i=0; i<video_clips.length; i+=1){
       var correct = jsPsych.data.get().last(2).values()[0].correct;
       if(correct){
         score += accY
-        return "<p>Correct trial: Your score is now +"+accY+" = "+score+".</p>"   
+        jsPsych.data.addDataToLastTrial({ score: score });
+        return "<p>Correct trial: Your score is now +"+accY+" = "+score+"</p>"   
       } else {
         score += accN
-        return "<p>Incorrect trial: Your score is now "+accN+" = "+score+".</p>"   
+        jsPsych.data.addDataToLastTrial({ score: score });        
+        return "<p>Incorrect trial: Your score is now "+accN+" = "+score+"</p>"   
       }
     },
     is_html: true,
@@ -157,12 +165,11 @@ for(i=0; i<video_clips.length; i+=1){
 
 var debrief_block = {
   type: "text",
-  text: "<p>On each trial of this experiment you saw videos of web pages loading back-to-back in  two different browsers.</p>" +
-        "<p>The videos were actually edited strategically from the same source to be slower or faster on different trials.</p>" +
-        "<p>We're interested in knowing whether the browser you <i>thought</i> was loading the page affected how fast it <i>seemed</i> to you.</p>" +
+  text: "<p>The videos were edited strategically from the <b>same source</b> to be slower or faster on different trials</p>" +
+        "<p>We're interested in knowing whether the browser you <i>thought</i> was loading the page affected how fast it <i>seemed</i> to you</p>" +
         "<br>" +
-        "<p>There are a total of "+trials+" trials. At "+accY+" points for an accurate trial and "+accN+" for an error, you scored a total of "+score+"!</p>"  +
-        "<p>Please press any key to conclude.</p>",
+        "<p>At "+accY+" points for an accurate trial and "+accN+" for an error, out of a total of "+trials+" trials you scored "+score+" points</p>"  +
+        "<p>Please press any key to conclude - thank you for your participation!</p>",
   timing_post_trial: 2000
 };
 timeline.push(debrief_block);
@@ -189,7 +196,7 @@ var sounds = ["{{ gamestatic('wav/silence.mp3') }}", "{{ gamestatic('wav/buzzer.
 var csrf = "{% csrf_token %}";
 jsPsych.init({
   timeline: timeline,
-  fullscreen: true,
+  // fullscreen: true,
   show_progress_bar: true,
   preload_images: images,
   preload_audio: sounds,
@@ -201,7 +208,7 @@ jsPsych.init({
   },
   // on_data_update: function(data){ console.log(JSON.stringify(data))},
   on_finish: function() {
-    jsPsych.data.displayData();
+    // jsPsych.data.displayData();
     $.ajax({
       type: 'post',
       cache: false,

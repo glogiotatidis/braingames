@@ -47,7 +47,7 @@
 
 .jspsych-display-element {
   font-family: 'Open Sans', 'Arial', sans-serif;
-  font-size: 18px;
+  font-size: 30px; /*18px; */
   line-height: 1.6em;
 }
 
@@ -94,6 +94,7 @@ input[type="text"] {
   text-align: center;
   padding: 10px 0px;
   width:100%;
+  font-size: 18px; /*added this here to vary from global text size */
 }
 #jspsych-progressbar-outer {
   background-color: #dedede;
