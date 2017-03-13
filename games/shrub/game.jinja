@@ -10,8 +10,10 @@
 	<script src="{{ gamestatic('js/plugins/jspsych-single-stim.js') }}"></script>
 	<script src="{{ gamestatic('js/plugins/jspsych-single-audio.js') }}"></script>  
 	<script src="{{ gamestatic('js/plugins/jspsych-instructions.js') }}"></script>
+	
 {% endblock %}
 
 {% block game_script %}
+  {% include 'shrub/static/js/preloadVideo.js' %}
   {% include 'shrub/game.js' %}
 {% endblock %}
