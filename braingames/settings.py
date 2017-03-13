@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'jquery',
     'import_export',
     'django_extensions',
+    'django_user_agents',
 
     # Django apps
     'django.contrib.admin',
@@ -66,6 +67,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
 )
 
 ROOT_URLCONF = 'braingames.urls'
@@ -203,6 +205,10 @@ LOGGING = {
         },
     }
 }
+
+# Name of cache backend to cache user agents. If it not specified default
+# cache alias will be used. Set to `None` to disable caching.
+USER_AGENTS_CACHE = 'default'
 
 # This is the bottom of settings.py
 if 'test' in sys.argv[1:2]:

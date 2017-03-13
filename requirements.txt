@@ -102,3 +102,8 @@ six==1.10.0 \
 django-redis==4.7.0 \
     --hash=sha256:81854d55fcf3e1ff7f4b3685f3d26173e2cec4e358cb9190862dd164d1eede7b
 redis==2.10.3 --hash=sha256:a4fb37b02860f6b1617f6469487471fd086dd2d38bbce640c2055862b9c4019c
+# jtg567 added to support https://github.com/selwin/django-user_agents; should add hash post-hoc?
+pyyaml
+ua-parser
+user-agents
+django-user-agents

@@ -97,8 +97,8 @@ var fixation = {
 };
 
 // build trial timeline
-// for(i = 0; i < video_clips.length; i += 1){
-for(i = 0; i < 1; i += 1){ // 1 trial only DEBUG
+for(i = 0; i < video_clips.length; i += 1){
+// for(i = 0; i < 1; i += 1){ // 1 trial only DEBUG
   // timeline.push(fixation);
   // video trial to display stimuli
   timeline.push({
@@ -196,7 +196,7 @@ var sounds = ["{{ gamestatic('wav/silence.mp3') }}", "{{ gamestatic('wav/buzzer.
 var csrf = "{% csrf_token %}";
 jsPsych.init({
   timeline: timeline,
-  // fullscreen: true,
+  fullscreen: true,
   show_progress_bar: true,
   preload_images: images,
   preload_audio: sounds,
