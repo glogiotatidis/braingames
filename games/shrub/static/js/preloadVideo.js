@@ -1,3 +1,4 @@
+// copied almost char for char from http://dinbror.dk/blog/how-to-preload-entire-html5-video-before-play-solved/
 preload_video = function(path) {
 	var req = new XMLHttpRequest();
 	req.open('GET', path, true);
@@ -20,6 +21,7 @@ preload_video = function(path) {
 	req.send();
 };
 
+// jinja templatized video file name array
 var filenames = [
 	"{{ gamestatic('vid/C_1_lag2.mp4') }}", "{{ gamestatic('vid/C_1_lag1.mp4') }}", "{{ gamestatic('vid/C_1_same.mp4') }}", "{{ gamestatic('vid/C_1_lead1.mp4') }}", "{{ gamestatic('vid/C_1_lead2.mp4') }}",
 	"{{ gamestatic('vid/C_2_lag2.mp4') }}", "{{ gamestatic('vid/C_2_lag1.mp4') }}", "{{ gamestatic('vid/C_2_same.mp4') }}", "{{ gamestatic('vid/C_2_lead1.mp4') }}", "{{ gamestatic('vid/C_2_lead2.mp4') }}",
@@ -33,6 +35,7 @@ var filenames = [
 	"{{ gamestatic('vid/F_5_lag2.mp4') }}", "{{ gamestatic('vid/F_5_lag1.mp4') }}", "{{ gamestatic('vid/F_5_same.mp4') }}", "{{ gamestatic('vid/F_5_lead1.mp4') }}", "{{ gamestatic('vid/F_5_lead2.mp4') }}"
 ];
 
+// loop over array, passing each video to the function
 for(i = 0; i < filenames.length; i += 1){
 	preload_video(filenames[i]);
 };
