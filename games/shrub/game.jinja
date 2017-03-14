@@ -12,13 +12,10 @@
 	<script src="{{ gamestatic('js/plugins/jspsych-instructions.js') }}"></script>
 {% endblock %}
 
-{% if request.user_agent.is_mobile %}
-	{% block game_script %}
-	  {% include 'shrub/nomobile.js' %}
-	{% endblock %}
-{% else %}
-	{% block game_script %}
-	  {% include 'shrub/game.js' %}
-	{% endblock %}
-{% endif %}
-
+{% block game_script %}
+	{% if request.user_agent.is_mobile %}
+		{% include 'shrub/nomobile.js' %}
+	{% else %}
+		{% include 'shrub/game.js' %}
+	{% endif %}
+{% endblock %}
