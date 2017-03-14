@@ -203,7 +203,7 @@ jsPsych.init({
   on_trial_start: function() {
     jsPsych.data.addDataToLastTrial({ trialStart: Date.now() })   // get timestamp
   },
-  on_trial_finish: function () {
+  on_trial_finish: function() {
     jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() })  // get timestamp
   },
   // on_data_update: function(data){ console.log(JSON.stringify(data))},
