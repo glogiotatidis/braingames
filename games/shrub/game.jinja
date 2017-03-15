@@ -3,20 +3,20 @@
 {% block page_title %}Braingames - "Shrub"{% endblock %}
 
 {% block header %}
-	<link href="{{ gamestatic('css/jspsych.css') }}" rel="stylesheet" />
-	<script src="{{ gamestatic('js/jspsych.js') }}"></script>
-	<script src="{{ gamestatic('js/plugins/jspsych-text.js') }}"></script>
-	<script src="{{ gamestatic('js/plugins/jspsych-video.js') }}"></script>	
-	<script src="{{ gamestatic('js/plugins/jspsych-single-stim.js') }}"></script>
-	<script src="{{ gamestatic('js/plugins/jspsych-single-audio.js') }}"></script>  
-	<script src="{{ gamestatic('js/plugins/jspsych-instructions.js') }}"></script>
+  <link href="{{ gamestatic('css/jspsych.css') }}" rel="stylesheet" />
+  <script src="{{ gamestatic('js/jspsych.js') }}"></script>
+  <script src="{{ gamestatic('js/plugins/jspsych-text.js') }}"></script>
+  <script src="{{ gamestatic('js/plugins/jspsych-video.js') }}"></script>
+  <script src="{{ gamestatic('js/plugins/jspsych-single-stim.js') }}"></script>
+  <script src="{{ gamestatic('js/plugins/jspsych-single-audio.js') }}"></script>
+  <script src="{{ gamestatic('js/plugins/jspsych-instructions.js') }}"></script>
 {% endblock %}
 
 {% block game_script %}
-	{% if request.user_agent.is_mobile %}
-		{% include 'shrub/nomobile.js' %}
-	{% else %}
-		{% include 'shrub/static/js/preloadVideo.js' %}
+  {% if request.user_agent.is_mobile %}
+    {% include 'shrub/nomobile.js' %}
+  {% else %}
+    {% include 'shrub/static/js/preloadVideo.js' %}
     {% include 'shrub/game.js' %}
-	{% endif %}
+  {% endif %}
 {% endblock %}
