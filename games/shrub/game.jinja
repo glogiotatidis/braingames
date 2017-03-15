@@ -13,6 +13,10 @@
 {% endblock %}
 
 {% block game_script %}
-  {% include 'shrub/static/js/preloadVideo.js' %}
-  {% include 'shrub/game.js' %}
+	{% if request.user_agent.is_mobile %}
+		{% include 'shrub/nomobile.js' %}
+	{% else %}
+		{% include 'shrub/static/js/preloadVideo.js' %}
+    {% include 'shrub/game.js' %}
+	{% endif %}
 {% endblock %}
