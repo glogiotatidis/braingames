@@ -52,7 +52,7 @@ var video_clips = [
   {sources:["{{ gamestatic('vid/F_5_lag1.mp4') }}"],  data: [{first: 'Firefox', clip: 5, speed: 'lag1',  correct: 'Chrome',  correctKey: 74}]},
   {sources:["{{ gamestatic('vid/F_5_same.mp4') }}"],  data: [{first: 'Firefox', clip: 5, speed: 'same',  correct: 'Same',    correctKey: 32}]},
   {sources:["{{ gamestatic('vid/F_5_lead1.mp4') }}"], data: [{first: 'Firefox', clip: 5, speed: 'lead1', correct: 'Firefox', correctKey: 70}]},
-  {sources:["{{ gamestatic('vid/F_5_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 5, speed: 'lead2', correct: 'Firefox', correctKey: 70}]} 
+  {sources:["{{ gamestatic('vid/F_5_lead2.mp4') }}"], data: [{first: 'Firefox', clip: 5, speed: 'lead2', correct: 'Firefox', correctKey: 70}]}
 ];
 var all_trials = jsPsych.randomization.repeat(video_clips, cycles);  // specify here with 2nd arg how many repetitions of each trial
 
@@ -86,20 +86,8 @@ var instructions_block = {
 };
 timeline.push(instructions_block);
 
-// static fixation cross
-  // (may not end up using in timeline)
-var fixation = {
-  type: 'single-stim',
-  stimulus: "{{ gamestatic('img/fixation.png') }}",
-  timing_stim: 500,
-  timing_response: 500,
-  choices: 'none'
-};
-
-// build trial timeline
-for(i = 0; i < video_clips.length; i += 1){
-// for(i = 0; i < 1; i += 1){ // 1 trial only DEBUG
-  // timeline.push(fixation);
+// build trial timeline (sub all_trials.length for 1 to debug)
+for(i = 0; i < all_trials.length; i += 1){
   // video trial to display stimuli
   timeline.push({
     type: 'video',
@@ -113,14 +101,14 @@ for(i = 0; i < video_clips.length; i += 1){
   // button-response trial to collect responses
   timeline.push({
     type: 'single-stim',
-  	stimulus: function(){
-  		var first = jsPsych.data.get().last(1).values()[0][0].first
-  		if(first == "Firefox") {
-  			return "{{ gamestatic('img/FirefoxFirst.png') }}"
-  		} else {
-  			return "{{ gamestatic('img/ChromeFirst.png') }}"
-  		}
-  	},
+    stimulus: function(){
+      var first = jsPsych.data.get().last(1).values()[0][0].first
+      if(first == "Firefox") {
+        return "{{ gamestatic('img/FirefoxFirst.png') }}"
+      } else {
+        return "{{ gamestatic('img/ChromeFirst.png') }}"
+      }
+    },
     is_html: false,
     choices: [70, 32, 74],  // f, spacebar, and j - https://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
     data: { correct_choice: all_trials[i].data[0].correctKey },
@@ -191,7 +179,7 @@ jsPsych.data.addProperties({
 
 // arrays of files to be called at .init for preloading (if specified via callback)
 var images = ["{{ gamestatic('img/ChromeFirst.png') }}", "{{ gamestatic('img/FirefoxFirst.png') }}"];
-var sounds = ["{{ gamestatic('wav/silence.mp3') }}", "{{ gamestatic('wav/buzzer.mp3') }}"];
+var sounds = ["{{ gamestatic('wav/silence.wav') }}", "{{ gamestatic('wav/buzzer.wav') }}"];
 
 var csrf = "{% csrf_token %}";
 jsPsych.init({
@@ -206,9 +194,7 @@ jsPsych.init({
   on_trial_finish: function() {
     jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() })  // get timestamp
   },
-  // on_data_update: function(data){ console.log(JSON.stringify(data))},
   on_finish: function() {
-    // jsPsych.data.displayData();
     $.ajax({
       type: 'post',
       cache: false,
