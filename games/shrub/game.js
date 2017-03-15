@@ -1,3 +1,10 @@
+// SSI url variables - ?psid=1234&pid=666
+var SSI_ids = [jsPsych.data.getURLVariable('psid'), jsPsych.data.getURLVariable('pid')];
+// if nothing passed just kill the script - don't waste our time
+if (SSI_ids[0] == null | SSI_ids[1] == null) {
+  throw new Error("SSI url variables not present, will not execute study.");
+}
+
 var cycles = 1                         // how many iterations per stimulus for proper response averaging
 var score = 0, accY = 100, accN = -50  // keeping score
 
@@ -162,19 +169,10 @@ var debrief_block = {
 };
 timeline.push(debrief_block);
 
-// generate a random subject ID
-var subject_id = Math.floor(Math.random()*100000);
-// if using heartbeat I'd want to use clientId here, grabbed as url var
-
-// pick a random condition for the subject at the start of the experiment
-// var condition_assignment = jsPsych.randomization.sample(['NewFx', 'MakersFx', 'NewBrowser'],1)[0];
-// copy/pasted from docs, probably not the best way to reinforce quotas?
-
-// record the condition assignment in the jsPsych data
-// this adds a property called 'subject' and a property called 'condition' to every trial
+// add global properties
 jsPsych.data.addProperties({
-  subject: subject_id
-  // condition: condition_assignment
+  psid: SSI_ids[0],
+  pid: SSI_ids[1]
 });
 
 // arrays of files to be called at .init for preloading (if specified via callback)
