@@ -123,9 +123,9 @@ for(i = 0; i < all_trials.length; i += 1){
     stimulus: function(){
       var correct = jsPsych.data.get().last(1).values()[0].correct;
       if(correct){
-        return "{{ gamestatic('wav/silence.mp3') }}"
+        return "{{ gamestatic('wav/silence.wav') }}"
       } else {
-        return "{{ gamestatic('wav/buzzer.mp3') }}"   
+        return "{{ gamestatic('wav/buzzer.wav') }}"   
       }
     },
     is_html: false,
