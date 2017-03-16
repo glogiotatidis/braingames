@@ -1,4 +1,4 @@
-// SSI url variables - ?psid=1234&pid=666
+// SSI url variables - ?psid=1234&pid=test
 var SSI_ids = [jsPsych.data.getURLVariable('psid'), jsPsych.data.getURLVariable('pid')];
 // if nothing passed just kill the script - don't waste our time
 if (SSI_ids[0] == null | SSI_ids[1] == null) {
@@ -74,6 +74,9 @@ var instructions_block = {
     "<p>That understanding can improve web experiences by<br>tailoring them around data contributed through your participation</p>" +
     "<p>Left and right arrow keys navigate<br>back and forward through the instructions</p>",
 
+    "<p><strong>Please do NOT do any of the following things,<br>or you will be disqualified to prevent confounding results:</strong></p>" +
+    "<ul><li>Hit ESC to exit fullscreen mode</li><li>Switch tabs or programs during the procedure</li><li>Zoom in or out</li><li>Reload the page once you have begun trials</li></ul>",
+
     "<p>On each trial of this experiment you will see two video clips of<br>web pages loading back-to-back in <b>different browsers</b></p>" +
     "<p>Please pay close attention to how quickly the two pages load in the clips -<br>one browser <i>may</i> load the page more quickly than the other</p>",
 
@@ -86,9 +89,9 @@ var instructions_block = {
     "<p>Press 'f' if the 1st clip loaded faster, 'j' if the 2nd clip loaded faster,<br>or space for the trials where the clips play at the same speed</p>" +
     "<img src='{{ gamestatic('img/instAnswer.png') }}'></img> " + " <img src='{{ gamestatic('img/keyhands.jpg') }}'></img>" + "<p>Key responses keep the trials moving along quickly</p>",
 
-    "<p>Error tones are provided for feedback when your judgment is incorrect<br><strike>You are permitted a short practice block of trials before we begin keeping score</strike></p>" +
+    "<p>Error tones are provided for feedback when your judgment is incorrect</p>" +
     "<p>There are a total of "+trials+" trials to capture enough data for us to draw conclusions<br>At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+trials*accY+" points possible</p>" +
-    "<p>The experiment begins beyond this final instruction screen, you will not be able to go backward from here<br>Please do not exit fullscreen mode or we will not be able to use your data</p>"
+    "<p>The experiment begins beyond this final instruction screen, you will not be able to go backward from here</p>"
   ]
 };
 timeline.push(instructions_block);
@@ -203,7 +206,12 @@ jsPsych.init({
           'X-CSRFToken': '{{  csrf_token }}'
       },
       data: jsPsych.data.dataAsJSON(),
-      success: function(output) { console.log(output); }
+      success: function(output) { 
+        console.log(output);
+        if (SSI_ids[1] != 'test') {
+          window.location.replace("http://dkr1.ssisurveys.com/projects/end?rst=1&basic=89931&psid="+SSI_ids[0]); // URL for SSI redirect
+        }
+      }
     });
   },
 });
