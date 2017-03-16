@@ -89,7 +89,9 @@ var instructions_block = {
     "<p>Press 'f' if the 1st clip loaded faster, 'j' if the 2nd clip loaded faster,<br>or space for the trials where the clips play at the same speed</p>" +
     "<img src='{{ gamestatic('img/instAnswer.png') }}'></img> " + " <img src='{{ gamestatic('img/keyhands.jpg') }}'></img>" + "<p>Key responses keep the trials moving along quickly</p>",
 
-    "<p>Error tones are provided for feedback when your judgment is incorrect</p>" +
+    "<p>Error tones are provided for feedback after each response<br>Get familiar with the correct and incorrect sounds below and adjust your volume:<br>" +
+    "Correct: <audio controls=1><source src={{ gamestatic('wav/pos.wav') }} type='audio/wav'></audio><br>" +
+    "Incorrect: <audio controls=2><source src={{ gamestatic('wav/neg.wav') }} type='audio/wav'></audio></p>" +
     "<p>There are a total of "+trials+" trials to capture enough data for us to draw conclusions<br>At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+trials*accY+" points possible</p>" +
     "<p>The experiment begins beyond this final instruction screen, you will not be able to go backward from here</p>"
   ]
@@ -133,9 +135,9 @@ for(i = 0; i < all_trials.length; i += 1){
     stimulus: function(){
       var correct = jsPsych.data.get().last(1).values()[0].correct;
       if(correct){
-        return "{{ gamestatic('wav/silence.wav') }}"
+        return "{{ gamestatic('wav/pos.wav') }}"
       } else {
-        return "{{ gamestatic('wav/buzzer.wav') }}"   
+        return "{{ gamestatic('wav/neg.wav') }}"   
       }
     },
     is_html: false,
@@ -179,8 +181,9 @@ jsPsych.data.addProperties({
 });
 
 // arrays of files to be called at .init for preloading (if specified via callback)
-var images = ["{{ gamestatic('img/ChromeFirst.png') }}", "{{ gamestatic('img/FirefoxFirst.png') }}"];
-var sounds = ["{{ gamestatic('wav/silence.wav') }}", "{{ gamestatic('wav/buzzer.wav') }}"];
+var images = ["{{ gamestatic('img/ChromeFirst.png') }}", "{{ gamestatic('img/FirefoxFirst.png') }}",
+              "{{ gamestatic('img/instAnswer.png') }}", "{{ gamestatic('img/keyhands.jpg') }}"];
+var sounds = ["{{ gamestatic('wav/pos.wav') }}", "{{ gamestatic('wav/neg.wav') }}"];
 
 var csrf = "{% csrf_token %}";
 jsPsych.init({
