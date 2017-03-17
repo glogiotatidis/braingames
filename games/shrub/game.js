@@ -1,12 +1,24 @@
 // SSI url variables - ?psid=1234&pid=test
 var SSI_ids = [jsPsych.data.getURLVariable('psid'), jsPsych.data.getURLVariable('pid')];
 // if nothing passed just kill the script - don't waste our time
-if (SSI_ids[0] == null | SSI_ids[1] == null) {
-  throw new Error("SSI url variables not present, will not execute study.");
+if (SSI_ids[0] == null | SSI_ids[1] == null) { throw new Error("SSI url variables not present, will not execute study."); }
+
+// check for reload (if there's a cookie they've been here before [admittedly naive assumption])
+if( typeof Cookies.get().ba !== 'undefined' ) {
+  // yes cookie; 
+  if (Cookies.getJSON('ba').r >= 1) {
+    Cookies.set('ba', {"r": Cookies.getJSON('ba').r += 1});
+    alert("Page reload detected, will not execute study.");
+    throw new Error("Page reload detected, will not execute study.");
+  } 
+} else {
+  // no cookie, 
+  if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r":0}); }
 }
 
 var cycles = 1                         // how many iterations per stimulus for proper response averaging
 var score = 0, accY = 100, accN = -50  // keeping score
+var eventCounter = { 'fullscreen_exit': 0, 'focus_loss': 0, 'key_zoom_increased': 0, 'key_zoom_decreased': 0, 'mouse_zoom_increased': 0, 'mouse_zoom_decreased': 0, 'tab_switch': 0};
 
 // specify all stimuli and levels of related IVs (ps I sorta hate editing this, would rather see it in a spreadsheet?)
 var video_clips = [
@@ -94,7 +106,37 @@ var instructions_block = {
     "Incorrect: <audio controls=2><source src={{ gamestatic('wav/neg.wav') }} type='audio/wav'></audio></p>" +
     "<p>There are a total of "+trials+" trials to capture enough data for us to draw conclusions<br>At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+trials*accY+" points possible</p>" +
     "<p>The experiment begins beyond this final instruction screen, you will not be able to go backward from here</p>"
-  ]
+  ],
+  on_finish: function() {
+    if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r": Cookies.getJSON('ba').r += 1}); }   // flag instruction completion; if they'd refreshed before now no penalty
+
+    // function to pass to eventListeners set up to catch things I don't want people doing
+    function disqualify(reason) {
+      eventCounter[reason] += 1;
+      console.log(reason + ": " + eventCounter[reason]);
+    }
+
+    // changing zoom
+    document.addEventListener('keydown', (event) => {
+      if ((event.keyCode == 107) && event.ctrlKey) { disqualify("key_zoom_increased"); }
+      if ((event.keyCode == 109) && event.ctrlKey) { disqualify("key_zoom_decreased"); }
+    }, false);
+    document.addEventListener('wheel', (event) => {
+      if ((event.deltaY > 0) && event.ctrlKey) { disqualify("mouse_zoom_decreased"); }
+      if ((event.deltaY < 0) && event.ctrlKey) { disqualify("mouse_zoom_increased"); }
+    })
+    // tab switching https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+    var hidden, visibilityChange;
+    if (typeof document.hidden !== "undefined") { hidden = "hidden"; visibilityChange = "visibilitychange"; }
+    else if (typeof document.msHidden !== "undefined") { hidden = "msHidden"; visibilityChange = "msvisibilitychange"; }
+    else if (typeof document.webkitHidden !== "undefined") { hidden = "webkitHidden"; visibilityChange = "webkitvisibilitychange"; }
+    function handleVisibilityChange() { if (document[hidden] && document.readyState == "complete") { disqualify("tab_switch"); } }
+    document.addEventListener(visibilityChange, handleVisibilityChange, false);
+    // fullscreen change (this one doesn't work, I think b/c jsP controls that handler [my esc key listener never hears the first one])
+    window.addEventListener('fullscreenchange', function() { disqualify("fullscreen_exit"); }, false);
+    // loss of window focus (triggers on its own every time trials begin)
+    window.addEventListener('blur', function() { disqualify("focus_loss"); }, false);
+  }
 };
 timeline.push(instructions_block);
 
@@ -148,11 +190,11 @@ for(i = 0; i < all_trials.length; i += 1){
     stimulus: function(){
       var correct = jsPsych.data.get().last(2).values()[0].correct;
       if(correct){
-        score += accY
+        score += accY;
         jsPsych.data.addDataToLastTrial({ score: score });
         return "<p>Correct trial: Your score is now +"+accY+" = "+score+"</p>"   
       } else {
-        score += accN
+        score += accN;
         jsPsych.data.addDataToLastTrial({ score: score });        
         return "<p>Incorrect trial: Your score is now "+accN+" = "+score+"</p>"   
       }
@@ -181,9 +223,9 @@ jsPsych.data.addProperties({
 });
 
 // arrays of files to be called at .init for preloading (if specified via callback)
-var images = ["{{ gamestatic('img/ChromeFirst.png') }}", "{{ gamestatic('img/FirefoxFirst.png') }}",
-              "{{ gamestatic('img/instAnswer.png') }}", "{{ gamestatic('img/keyhands.jpg') }}"];
-var sounds = ["{{ gamestatic('wav/pos.wav') }}", "{{ gamestatic('wav/neg.wav') }}"];
+var images = ["{{ gamestatic('img/ChromeFirst.png') }}", "{{ gamestatic('img/FirefoxFirst.png') }}",  // answer screen images
+              "{{ gamestatic('img/instAnswer.png') }}", "{{ gamestatic('img/keyhands.jpg') }}"];      // instruction screen images
+var sounds = ["{{ gamestatic('wav/pos.wav') }}", "{{ gamestatic('wav/neg.wav') }}"];                  // trial accuracy feedback sounds
 
 var csrf = "{% csrf_token %}";
 jsPsych.init({
@@ -197,6 +239,7 @@ jsPsych.init({
   },
   on_trial_finish: function() {
     jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() })  // get timestamp
+    jsPsych.data.addDataToLastTrial({ events: eventCounter })     // track event counts by trial
   },
   on_finish: function() {
     $.ajax({
@@ -213,6 +256,7 @@ jsPsych.init({
         console.log(output);
         if (SSI_ids[1] != 'test') {
           window.location.replace("http://dkr1.ssisurveys.com/projects/end?rst=1&basic=89931&psid="+SSI_ids[0]); // URL for SSI redirect
+          // if we HAVE to dq live (not post hoc) I could check eventCounter here and dq when counts exceed some threshold
         }
       }
     });
