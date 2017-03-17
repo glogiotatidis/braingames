@@ -1,15 +1,16 @@
 // SSI url variables - ?psid=1234&pid=test
 var SSI_ids = [jsPsych.data.getURLVariable('psid'), jsPsych.data.getURLVariable('pid')];
+// for some reason, (try to) shut it down
+function kill(reason) { alert(reason); throw new Error(reason); }
 // if nothing passed just kill the script - don't waste our time
-if (SSI_ids[0] == null | SSI_ids[1] == null) { throw new Error("SSI url variables not present, will not execute study."); }
+if (SSI_ids[0] == null | SSI_ids[1] == null) { kill("SSI url variables not present, will not execute study."); }
 
 // check for reload (if there's a cookie they've been here before [admittedly naive assumption])
 if( typeof Cookies.get().ba !== 'undefined' ) {
   // yes cookie; 
   if (Cookies.getJSON('ba').r >= 1) {
     Cookies.set('ba', {"r": Cookies.getJSON('ba').r += 1});
-    alert("Page reload detected, will not execute study.");
-    throw new Error("Page reload detected, will not execute study.");
+    kill("Page reload detected, will not execute study.");
   } 
 } else {
   // no cookie, 
@@ -18,7 +19,15 @@ if( typeof Cookies.get().ba !== 'undefined' ) {
 
 var cycles = 1                         // how many iterations per stimulus for proper response averaging
 var score = 0, accY = 100, accN = -50  // keeping score
-var eventCounter = { 'fullscreen_exit': 0, 'focus_loss': 0, 'key_zoom_increased': 0, 'key_zoom_decreased': 0, 'mouse_zoom_increased': 0, 'mouse_zoom_decreased': 0, 'tab_switch': 0};
+var eventCounter = {
+  'fullscreen_exit': 0,
+  'focus_loss': 0,
+  'key_zoom_increased': 0,
+  'key_zoom_decreased': 0,
+  'mouse_zoom_increased': 0,
+  'mouse_zoom_decreased': 0,
+  'tab_switch': 0
+};
 
 // specify all stimuli and levels of related IVs (ps I sorta hate editing this, would rather see it in a spreadsheet?)
 var video_clips = [
@@ -169,6 +178,7 @@ for(i = 0; i < all_trials.length; i += 1){
     on_finish: function(data) {
       // check accuracy
       jsPsych.data.addDataToLastTrial({ correct: data.key_press == data.correct_choice });
+      jsPsych.data.addDataToLastTrial({ events: eventCounter });     // track event counts by trial
     }
   });
   // error tone feedback - sometimes the sound doesn't play and requires a keypress to advance; rebooting fixes it :(
@@ -220,6 +230,7 @@ timeline.push(debrief_block);
 jsPsych.data.addProperties({
   psid: SSI_ids[0],
   pid: SSI_ids[1]
+  // I think the rest can be derived post-hoc in the process of more granular data munging?
 });
 
 // arrays of files to be called at .init for preloading (if specified via callback)
@@ -235,11 +246,10 @@ jsPsych.init({
   preload_images: images,
   preload_audio: sounds,
   on_trial_start: function() {
-    jsPsych.data.addDataToLastTrial({ trialStart: Date.now() })   // get timestamp
+    jsPsych.data.addDataToLastTrial({ trialStart: Date.now() });  // get timestamp
   },
   on_trial_finish: function() {
-    jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() })  // get timestamp
-    jsPsych.data.addDataToLastTrial({ events: eventCounter })     // track event counts by trial
+    jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() }); // get timestamp
   },
   on_finish: function() {
     $.ajax({
