@@ -18,6 +18,7 @@ if( typeof Cookies.get().ba !== 'undefined' ) {
 
 var cycles = 1                         // how many iterations per stimulus for proper response averaging
 var score = 0, accY = 100, accN = -50  // keeping score
+var eventCounter = { 'fullscreen_exit': 0, 'focus_loss': 0, 'key_zoom_increased': 0, 'key_zoom_decreased': 0, 'mouse_zoom_increased': 0, 'mouse_zoom_decreased': 0, 'tab_switch': 0};
 
 // specify all stimuli and levels of related IVs (ps I sorta hate editing this, would rather see it in a spreadsheet?)
 var video_clips = [
@@ -108,6 +109,33 @@ var instructions_block = {
   ],
   on_finish: function() {
     if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r": Cookies.getJSON('ba').r += 1}); }   // flag instruction completion; if they'd refreshed before now no penalty
+
+    // function to pass to eventListeners set up to catch things I don't want people doing
+    function disqualify(reason) {
+      eventCounter[reason] += 1;
+      console.log(reason + ": " + eventCounter[reason]);
+    }
+
+    // changing zoom
+    document.addEventListener('keydown', (event) => {
+      if ((event.keyCode == 107) && event.ctrlKey) { disqualify("key_zoom_increased"); }
+      if ((event.keyCode == 109) && event.ctrlKey) { disqualify("key_zoom_decreased"); }
+    }, false);
+    document.addEventListener('wheel', (event) => {
+      if ((event.deltaY > 0) && event.ctrlKey) { disqualify("mouse_zoom_decreased"); }
+      if ((event.deltaY < 0) && event.ctrlKey) { disqualify("mouse_zoom_increased"); }
+    })
+    // tab switching https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+    var hidden, visibilityChange;
+    if (typeof document.hidden !== "undefined") { hidden = "hidden"; visibilityChange = "visibilitychange"; }
+    else if (typeof document.msHidden !== "undefined") { hidden = "msHidden"; visibilityChange = "msvisibilitychange"; }
+    else if (typeof document.webkitHidden !== "undefined") { hidden = "webkitHidden"; visibilityChange = "webkitvisibilitychange"; }
+    function handleVisibilityChange() { if (document[hidden] && document.readyState == "complete") { disqualify("tab_switch"); } }
+    document.addEventListener(visibilityChange, handleVisibilityChange, false);
+    // fullscreen change (this one doesn't work, I think b/c jsP controls that handler [my esc key listener never hears the first one])
+    window.addEventListener('fullscreenchange', function() { disqualify("fullscreen_exit"); }, false);
+    // loss of window focus (triggers on its own every time trials begin)
+    window.addEventListener('blur', function() { disqualify("focus_loss"); }, false);
   }
 };
 timeline.push(instructions_block);
@@ -211,6 +239,7 @@ jsPsych.init({
   },
   on_trial_finish: function() {
     jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() })  // get timestamp
+    jsPsych.data.addDataToLastTrial({ events: eventCounter })     // track event counts by trial
   },
   on_finish: function() {
     $.ajax({
@@ -227,6 +256,7 @@ jsPsych.init({
         console.log(output);
         if (SSI_ids[1] != 'test') {
           window.location.replace("http://dkr1.ssisurveys.com/projects/end?rst=1&basic=89931&psid="+SSI_ids[0]); // URL for SSI redirect
+          // if we HAVE to dq live (not post hoc) I could check eventCounter here and dq when counts exceed some threshold
         }
       }
     });
