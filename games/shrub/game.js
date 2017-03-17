@@ -1,8 +1,19 @@
 // SSI url variables - ?psid=1234&pid=test
 var SSI_ids = [jsPsych.data.getURLVariable('psid'), jsPsych.data.getURLVariable('pid')];
 // if nothing passed just kill the script - don't waste our time
-if (SSI_ids[0] == null | SSI_ids[1] == null) {
-  throw new Error("SSI url variables not present, will not execute study.");
+if (SSI_ids[0] == null | SSI_ids[1] == null) { throw new Error("SSI url variables not present, will not execute study."); }
+
+// check for reload (if there's a cookie they've been here before [admittedly naive assumption])
+if( typeof Cookies.get().ba !== 'undefined' ) {
+  // yes cookie; 
+  if (Cookies.getJSON('ba').r >= 1) {
+    Cookies.set('ba', {"r": Cookies.getJSON('ba').r += 1});
+    alert("Page reload detected, will not execute study.");
+    throw new Error("Page reload detected, will not execute study.");
+  } 
+} else {
+  // no cookie, 
+  if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r":0}); }
 }
 
 var cycles = 1                         // how many iterations per stimulus for proper response averaging
@@ -94,7 +105,10 @@ var instructions_block = {
     "Incorrect: <audio controls=2><source src={{ gamestatic('wav/neg.wav') }} type='audio/wav'></audio></p>" +
     "<p>There are a total of "+trials+" trials to capture enough data for us to draw conclusions<br>At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+trials*accY+" points possible</p>" +
     "<p>The experiment begins beyond this final instruction screen, you will not be able to go backward from here</p>"
-  ]
+  ],
+  on_finish: function() {
+    if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r": Cookies.getJSON('ba').r += 1}); }   // flag instruction completion; if they'd refreshed before now no penalty
+  }
 };
 timeline.push(instructions_block);
 
@@ -148,11 +162,11 @@ for(i = 0; i < all_trials.length; i += 1){
     stimulus: function(){
       var correct = jsPsych.data.get().last(2).values()[0].correct;
       if(correct){
-        score += accY
+        score += accY;
         jsPsych.data.addDataToLastTrial({ score: score });
         return "<p>Correct trial: Your score is now +"+accY+" = "+score+"</p>"   
       } else {
-        score += accN
+        score += accN;
         jsPsych.data.addDataToLastTrial({ score: score });        
         return "<p>Incorrect trial: Your score is now "+accN+" = "+score+"</p>"   
       }
@@ -181,9 +195,9 @@ jsPsych.data.addProperties({
 });
 
 // arrays of files to be called at .init for preloading (if specified via callback)
-var images = ["{{ gamestatic('img/ChromeFirst.png') }}", "{{ gamestatic('img/FirefoxFirst.png') }}",
-              "{{ gamestatic('img/instAnswer.png') }}", "{{ gamestatic('img/keyhands.jpg') }}"];
-var sounds = ["{{ gamestatic('wav/pos.wav') }}", "{{ gamestatic('wav/neg.wav') }}"];
+var images = ["{{ gamestatic('img/ChromeFirst.png') }}", "{{ gamestatic('img/FirefoxFirst.png') }}",  // answer screen images
+              "{{ gamestatic('img/instAnswer.png') }}", "{{ gamestatic('img/keyhands.jpg') }}"];      // instruction screen images
+var sounds = ["{{ gamestatic('wav/pos.wav') }}", "{{ gamestatic('wav/neg.wav') }}"];                  // trial accuracy feedback sounds
 
 var csrf = "{% csrf_token %}";
 jsPsych.init({
