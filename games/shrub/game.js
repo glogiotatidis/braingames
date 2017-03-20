@@ -1,7 +1,29 @@
-// SSI url variables - ?psid=1234&pid=test
-var SSI_ids = [jsPsych.data.getURLVariable('psid'), jsPsych.data.getURLVariable('pid')];
+// SSI stuff
+var SSI_ids = [jsPsych.data.getURLVariable('psid'), jsPsych.data.getURLVariable('pid')]; // debug with ?psid=<whatever>&pid=test
+var basicCode = 89931;
+
 // for some reason, (try to) shut it down
-function kill(reason) { alert(reason); throw new Error(reason); }
+function kill(reason) {
+  alert(reason);
+  jsPsych.data.addProperties({ status: 'disqualified' });
+    $.ajax({
+      type: 'post',
+      cache: false,
+      url: 'datacollector/',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      headers: {
+          'X-CSRFToken': '{{  csrf_token }}'
+      },
+      data: jsPsych.data.dataAsJSON(),
+      success: function(output) {
+        console.log(output);
+        if (SSI_ids[1] == 'test') { throw new Error(reason);
+        } else {  window.location.replace("http://dkr1.ssisurveys.com/projects/end?rst=2&basic="+basicCode+"&psid="+SSI_ids[0]); // URL for SSI redirect
+        }
+      }
+    });
+}
 // if nothing passed just kill the script - don't waste our time
 if (SSI_ids[0] == null | SSI_ids[1] == null) { kill("SSI url variables not present, will not execute study."); }
 
@@ -10,7 +32,7 @@ if( typeof Cookies.get().ba !== 'undefined' ) {
   // yes cookie; 
   if (Cookies.getJSON('ba').r >= 1) {
     Cookies.set('ba', {"r": Cookies.getJSON('ba').r += 1});
-    kill("Page reload detected, will not execute study.");
+    kill("Page reload detected, will not continue study; disqualification.");
   } 
 } else {
   // no cookie, 
@@ -19,15 +41,6 @@ if( typeof Cookies.get().ba !== 'undefined' ) {
 
 var cycles = 1                         // how many iterations per stimulus for proper response averaging
 var score = 0, accY = 100, accN = -50  // keeping score
-var eventCounter = {
-  'fullscreen_exit': 0,
-  'focus_loss': 0,
-  'key_zoom_increased': 0,
-  'key_zoom_decreased': 0,
-  'mouse_zoom_increased': 0,
-  'mouse_zoom_decreased': 0,
-  'tab_switch': 0
-};
 
 // specify all stimuli and levels of related IVs (ps I sorta hate editing this, would rather see it in a spreadsheet?)
 var video_clips = [
@@ -125,26 +138,6 @@ var instructions_block = {
       console.log(reason + ": " + eventCounter[reason]);
     }
 
-    // changing zoom
-    document.addEventListener('keydown', (event) => {
-      if ((event.keyCode == 107) && event.ctrlKey) { disqualify("key_zoom_increased"); }
-      if ((event.keyCode == 109) && event.ctrlKey) { disqualify("key_zoom_decreased"); }
-    }, false);
-    document.addEventListener('wheel', (event) => {
-      if ((event.deltaY > 0) && event.ctrlKey) { disqualify("mouse_zoom_decreased"); }
-      if ((event.deltaY < 0) && event.ctrlKey) { disqualify("mouse_zoom_increased"); }
-    })
-    // tab switching https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
-    var hidden, visibilityChange;
-    if (typeof document.hidden !== "undefined") { hidden = "hidden"; visibilityChange = "visibilitychange"; }
-    else if (typeof document.msHidden !== "undefined") { hidden = "msHidden"; visibilityChange = "msvisibilitychange"; }
-    else if (typeof document.webkitHidden !== "undefined") { hidden = "webkitHidden"; visibilityChange = "webkitvisibilitychange"; }
-    function handleVisibilityChange() { if (document[hidden] && document.readyState == "complete") { disqualify("tab_switch"); } }
-    document.addEventListener(visibilityChange, handleVisibilityChange, false);
-    // fullscreen change (this one doesn't work, I think b/c jsP controls that handler [my esc key listener never hears the first one])
-    window.addEventListener('fullscreenchange', function() { disqualify("fullscreen_exit"); }, false);
-    // loss of window focus (triggers on its own every time trials begin)
-    window.addEventListener('blur', function() { disqualify("focus_loss"); }, false);
   }
 };
 timeline.push(instructions_block);
@@ -178,7 +171,6 @@ for(i = 0; i < all_trials.length; i += 1){
     on_finish: function(data) {
       // check accuracy
       jsPsych.data.addDataToLastTrial({ correct: data.key_press == data.correct_choice });
-      jsPsych.data.addDataToLastTrial({ events: eventCounter });     // track event counts by trial
     }
   });
   // error tone feedback - sometimes the sound doesn't play and requires a keypress to advance; rebooting fixes it :(
@@ -250,8 +242,32 @@ jsPsych.init({
   },
   on_trial_finish: function() {
     jsPsych.data.addDataToLastTrial({ trialFinish: Date.now() }); // get timestamp
+    // here check for events and kill the study if one occurred (ignore lead up to first trial)
+    if (jsPsych.progress().current_trial_global > 0) {
+      // check only entries for current trial
+      var events = jsPsych.data.getInteractionData().values().filter(function(el){return el.trial === jsPsych.progress().current_trial_global});
+      // array should be empty if they were good, if not give them the boot
+      if (events.length > 0) {
+        switch (events[0].event) {
+          case 'fullscreenexit':
+            var reason = "Exited full screen"; break;
+          case 'tab_switch':
+            var reason = "Browser tab changed"; break;
+          case 'blur':
+          case 'focus':
+            var reason = "Application focus changed"; break;            
+          case 'key_zoom_increase':
+          case 'key_zoom_decrease':
+          case 'mouse_zoom_increase':
+          case 'mouse_zoom_decrease':
+            var reason = "Zoom altered"; break;
+        }
+        kill(reason + ", will not continue study; disqualification.");
+      }
+    }
   },
   on_finish: function() {
+    jsPsych.data.addProperties({ status: 'complete' });
     $.ajax({
       type: 'post',
       cache: false,
@@ -265,7 +281,7 @@ jsPsych.init({
       success: function(output) { 
         console.log(output);
         if (SSI_ids[1] != 'test') {
-          window.location.replace("http://dkr1.ssisurveys.com/projects/end?rst=1&basic=89931&psid="+SSI_ids[0]); // URL for SSI redirect
+          window.location.replace("http://dkr1.ssisurveys.com/projects/end?rst=1&basic="+basicCode+"&psid="+SSI_ids[0]); // URL for SSI redirect
           // if we HAVE to dq live (not post hoc) I could check eventCounter here and dq when counts exceed some threshold
         }
       }

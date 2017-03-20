@@ -56,7 +56,7 @@ window.jsPsych = (function() {
       'on_finish': function(data) {
         return undefined;
       },
-      'on_trial_start': function() {
+      'on_trial_start': function(trial) {
         return undefined;
       },
       'on_trial_finish': function() {
@@ -800,10 +800,10 @@ window.jsPsych = (function() {
 
   function doTrial(trial) {
 
-    current_trial = trial;
-
     // call experiment wide callback
-    opts.on_trial_start();
+    opts.on_trial_start(trial);
+
+    current_trial = trial;
 
     // check if trial has it's own display element
     var display_element = DOM_target;
@@ -1341,6 +1341,66 @@ jsPsych.data = (function() {
     document.addEventListener('fullscreenchange', fullscreenchange);
     document.addEventListener('mozfullscreenchange', fullscreenchange);
     document.addEventListener('webkitfullscreenchange', fullscreenchange);
+
+    // changing zoom capture
+    document.addEventListener('keydown', (event) => {
+      if ((event.keyCode == 107 && event.ctrlKey)||(event.keyCode == 61 && event.ctrlKey && event.shiftKey)) {
+        var data = {
+          event: 'key_zoom_increase',
+          trial: jsPsych.progress().current_trial_global,
+          time: jsPsych.totalTime()
+        };
+        interactionData.push(data);
+        jsPsych.initSettings().on_interaction_data_update(data);
+      }
+      if ((event.keyCode == 109 || event.keyCode == 173) && event.ctrlKey) {
+        var data = {
+          event: 'key_zoom_decrease',
+          trial: jsPsych.progress().current_trial_global,
+          time: jsPsych.totalTime()
+        };
+        interactionData.push(data);
+        jsPsych.initSettings().on_interaction_data_update(data);
+      }
+    });
+    document.addEventListener('wheel', (event) => {
+      if ((event.deltaY < 0) && event.ctrlKey) {
+        var data = {
+          event: "mouse_zoom_increased",
+          trial: jsPsych.progress().current_trial_global,
+          time: jsPsych.totalTime()
+        };
+        interactionData.push(data);
+        jsPsych.initSettings().on_interaction_data_update(data);
+      }
+      if ((event.deltaY > 0) && event.ctrlKey) {
+        var data = {
+          event: "mouse_zoom_decreased",
+          trial: jsPsych.progress().current_trial_global,
+          time: jsPsych.totalTime()
+        };
+        interactionData.push(data);
+        jsPsych.initSettings().on_interaction_data_update(data);
+      }
+    });
+
+    // tab switching capture https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+    var hidden, visibilityChange;
+    if (typeof document.hidden !== "undefined") { hidden = "hidden"; visibilityChange = "visibilitychange"; }
+    else if (typeof document.msHidden !== "undefined") { hidden = "msHidden"; visibilityChange = "msvisibilitychange"; }
+    else if (typeof document.webkitHidden !== "undefined") { hidden = "webkitHidden"; visibilityChange = "webkitvisibilitychange"; }
+    function handleVisibilityChange() {
+      if (document[hidden] && document.readyState == "complete") {
+        var data = {
+          event: 'tab_switch',
+          trial: jsPsych.progress().current_trial_global,
+          time: jsPsych.totalTime()
+        };
+        interactionData.push(data);
+        jsPsych.initSettings().on_interaction_data_update(data);
+      }
+    }
+    document.addEventListener(visibilityChange, handleVisibilityChange);
   }
 
   // public methods for testing purposes. not recommended for use.
@@ -2207,16 +2267,16 @@ jsPsych.pluginAPI = (function() {
 
   /**
    * Allows communication with user hardware through our custom Google Chrome extension + native C++ program
-   * @param		{object}	mess	The message to be passed to our extension, see its documentation for the expected members of this object.
-   * @author	Daniel Rivas
+   * @param   {object}  mess  The message to be passed to our extension, see its documentation for the expected members of this object.
+   * @author  Daniel Rivas
    *
    */
   module.hardware = function hardware(mess){
-	  //since Chrome extension content-scripts do not share the javascript environment with the page script that loaded jspsych,
-	  //we will need to use hacky methods like communicating through DOM events.
-	  var jspsychEvt = new CustomEvent('jspsych', {detail: mess});
-	  document.dispatchEvent(jspsychEvt);
-	  //And voila! it will be the job of the content script injected by the extension to listen for the event and do the appropriate actions.
+    //since Chrome extension content-scripts do not share the javascript environment with the page script that loaded jspsych,
+    //we will need to use hacky methods like communicating through DOM events.
+    var jspsychEvt = new CustomEvent('jspsych', {detail: mess});
+    document.dispatchEvent(jspsychEvt);
+    //And voila! it will be the job of the content script injected by the extension to listen for the event and do the appropriate actions.
   };
 
   /** {boolean} Indicates whether this instance of jspsych has opened a hardware connection through our browser extension */
@@ -2226,7 +2286,7 @@ jsPsych.pluginAPI = (function() {
   //it might be useful to open up a line of communication from the extension back to this page script,
   //again, this will have to pass through DOM events. For now speed is of no concern so I will use jQuery
   document.addEventListener("jspsych-activate", function(evt){
-	  module.hardwareConnected = true;
+    module.hardwareConnected = true;
   })
 
 
