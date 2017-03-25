@@ -15,7 +15,7 @@ function kill(reason) {
       headers: {
           'X-CSRFToken': '{{  csrf_token }}'
       },
-      data: jsPsych.data.dataAsJSON(),
+      data: jsPsych.data.get().json(),
       success: function(output) {
         console.log(output);
         if (SSI_ids[1] == 'test') { throw new Error(reason);
@@ -143,7 +143,7 @@ var instructions_block = {
 timeline.push(instructions_block);
 
 // build trial timeline (sub all_trials.length for 1 to debug)
-for(i = 0; i < all_trials.length; i += 1){
+for(i = 0; i < 1; i += 1){
   // video trial to display stimuli
   timeline.push({
     type: 'video',
@@ -209,11 +209,13 @@ for(i = 0; i < all_trials.length; i += 1){
 
 var debrief_block = {
   type: "text",
-  text: "<p>The videos were edited strategically from the <b>same source</b> to be slower or faster on different trials</p>" +
-        "<p>We're interested in knowing whether the browser you <i>thought</i> was loading the page affected how fast it <i>seemed</i> to you</p>" +
-        "<br>" +
-        "<p>At "+accY+" points for an accurate trial and "+accN+" for an error, out of a total of "+trials+" trials you scored "+score+" points</p>"  +
-        "<p>Please press any key to conclude - thank you for your participation!</p>",
+  text: function() {
+    return "<p>The videos were edited strategically from the <b>same source</b> to be slower or faster on different trials</p>" +
+    "<p>We're interested in knowing whether the browser you <i>thought</i> was loading the page affected how fast it <i>seemed</i> to you</p>" +
+    "<br>" +
+    "<p>At "+accY+" points for an accurate trial and "+accN+" for an error, out of a total of "+trials+" trials you scored "+score+" points</p>"  +
+    "<p>Please press any key to conclude - thank you for your participation!</p>"
+  },
   timing_post_trial: 2000
 };
 timeline.push(debrief_block);
@@ -277,7 +279,7 @@ jsPsych.init({
       headers: {
           'X-CSRFToken': '{{  csrf_token }}'
       },
-      data: jsPsych.data.dataAsJSON(),
+      data: jsPsych.data.get().json(),
       success: function(output) { 
         console.log(output);
         if (SSI_ids[1] != 'test') {
