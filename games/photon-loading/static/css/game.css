@@ -176,9 +176,15 @@
 }
 
 .exp-instruction {
-  margin: 60px auto;
-  display: table;
-  background-color: rgba(255, 255, 255, 0.5);
-  padding: 8px 15px 4px;
-  border-radius: 3px;
+  width: 20vw;
+  min-width: 500px;
+  padding: 20px;
+  top: 10px;
+  right: 10px;
+  color: #fff;
+  position: absolute;
+  z-index: 99999;
+  background-color: rgba(0,0,0,.8);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
 }
