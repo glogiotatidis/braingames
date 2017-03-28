@@ -64,16 +64,14 @@ You'll need Python 3, virtualenv and sqlite3:
 
  1. Set up virtualenv
  2. activate the virtualenv
-    - `virtualenv .`
-    - `source bin/activate`
+    - `virtualenv venv`
+    - `source venv/bin/activate`
  3. Install packages from `requirements.txt`
     - `pip install -r requirements.txt`
  4. Configure app by copying and optionally editing `.env-example` to `.env`.
     - `cp  .env-example .env`
  5. Run the database migrations
     - `python ./manage.py migrate`
- 6. Create the static files (also, run this command every time you change anything in the static folders)
-    - `python manage.py collectstatic --noinput`
  7. Start the server
     - `python manage.py runserver 0.0.0.0:8000`
  8. Develop!
