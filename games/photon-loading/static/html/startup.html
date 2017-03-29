@@ -8,10 +8,6 @@
 </head>
 <body>
     <div id="active-game">
-      <span id="navigation">
-          <a href="index.html">Back</a>
-          <button onclick="window.location.reload()">Reset</button>
-      </span>
 
       <div class="exp-instruction" style="z-index:1">
           Please open the »Web Browser« application.
@@ -26,100 +22,21 @@
           </div>
       </div>
 
-      <div id="w2" class="win">
-          <div id="s2" class="startframe">
-              <div id="t2" class="toolbar"></div>
-          </div>
-      </div>
-
       <div id="taskbar">
           <div class="startbtn"></div>
-          <div class="launch cohort-1" id="l2" title="Web Browser"></div>
-          <div class="launch cohort-2" id="l1" title="Web Browser"></div>
+          <div class="launch" id="l1" title="Web Browser"></div>
       </div>
 
       <button id="end-trial"></button>
     <div/>
 
     <script type="text/javascript">
+      var js = document.createElement("script");
 
-        function vars() {
-          for (var i = 0; i < arguments.length; i++) {
-            window[arguments[i]] = document.getElementById(arguments[i]);
-          }
-        }
+      js.type = "text/javascript";
+      js.src = jsPsych.currentTrial().data.js_url;
 
-        //gets url variables from the testing url NOT the iframe url as in previous
-        var urlvar = jsPsych.data.urlVariables();
-
-        // hide navigation if in testing mode
-        if (urlvar.testing) {
-            document.getElementById('navigation').style.display = "none";
-        }
-
-        // if a test cohort is specified, limit the test to the specific item
-        // cohort 1: segmented loading
-        // cohort 2: current behavior
-        var totalCohorts = 2;
-        var cohort = jsPsych.currentTrial().data.version;
-            for (var i=1; i<=totalCohorts; i++) {
-                if (i == cohort) {
-                    document.querySelectorAll('.cohort-'+i).forEach((item) => {
-                        item.classList.add('hidden');
-                    });
-                }
-            }
-
-        vars('l1', 'w1', 's1', 't1');
-        vars('l2', 'w2', 's2', 't2');
-
-        var launch1 = () => {
-            setTimeout(function() {
-                l1.classList.add('active');
-                l2.classList.remove('active');
-                w1.style['z-index'] = 10;
-                w2.style['z-index'] = 1;
-                w1.style.opacity = 1;
-                setTimeout(function() {
-                    s1.style.opacity = 1;
-                    setTimeout(function() {
-                        t1.style.opacity = 1;
-                        setTimeout(function() {
-                          $('#active-game').addClass('end');
-                          setTimeout(function() {
-                            $('#end-trial').click();
-                            $('#active-game').removeClass('end');
-                          }, 500);
-                        }, 2000);
-                    }, jsPsych.currentTrial().data.delay * (2/3));
-                }, jsPsych.currentTrial().data.delay * (1/3));
-            }, 200);
-        }
-
-        var launch2 = () => {
-            setTimeout(function() {
-                l2.classList.add('active');
-                l1.classList.remove('active');
-                w2.style['z-index'] = 10;
-                w1.style['z-index'] = 1;
-                setTimeout(function() {
-                    w2.style.opacity = 1;
-                    s2.style.opacity = 1;
-                    t2.style.opacity = 1;
-                    setTimeout(function() {
-                      $('#active-game').addClass('end');
-                      setTimeout(function() {
-                        $('#end-trial').click();
-                        $('#active-game').removeClass('end');
-                      }, 500);
-                    }, 2000);
-                }, jsPsych.currentTrial().data.delay);
-            }, 200);
-        }
-
-        l1.addEventListener('click', launch1);
-        l2.addEventListener('click', launch2);
-        document.querySelector('.desktop-icon').addEventListener('dblclick', window['launch'+cohort]);
+      document.body.appendChild(js);
     </script>
 </body>
 
