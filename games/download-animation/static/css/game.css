@@ -1,0 +1,85 @@
+.hidden {
+  display: none !important;
+}
+
+.jspsych-display-element {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: #D4D4D4;
+  font-family: sans-serif;
+}
+
+.interaction {
+  display: block;
+  position: absolute;
+  cursor: pointer;
+}
+
+#download-now {
+  width: 185px;
+  height: 40px;
+  top: 569px;
+  left: 235px;
+}
+
+#save-file {
+  width: 81px;
+  height: 29px;
+  top: 378px;
+  left: 676px;
+}
+
+#bookmark {
+  width: 25px;
+  height: 26px;
+  top: 98px;
+  left: 904px;
+}
+
+#downloads {
+  width: 25px;
+  height: 26px;
+  top: 98px;
+  left: 1064px;
+}
+
+#library {
+  width: 25px;
+  height: 26px;
+  top: 98px;
+  left: 1092px;
+}
+
+#download-doorhanger {
+  display: block;
+  position: absolute;
+  width: 427px;
+  height: 113px;
+  top: 133px;
+  left: 665px;
+}
+
+#library-doorhanger {
+  display: block;
+  position: absolute;
+  width: 324px;
+  height: 483px;
+  top: 133px;
+  left: 799px;
+}
+
+.hint {
+  top: 33px;
+  position: absolute;
+  background-color: #F0F0F0;
+  border: black 1px solid;
+  line-height: 1.2em;
+  font-size: .7em;
+  padding: 1px 5px;
+  border-radius: 2px;
+  left: -6px;
+}
