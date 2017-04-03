@@ -130,20 +130,14 @@ var instructions_block = {
     "<p>The experiment begins beyond this final instruction screen, you will not be able to go backward from here</p>"
   ],
   on_finish: function() {
-    if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r": Cookies.getJSON('ba').r += 1}); }   // flag instruction completion; if they'd refreshed before now no penalty
-
-    // function to pass to eventListeners set up to catch things I don't want people doing
-    function disqualify(reason) {
-      eventCounter[reason] += 1;
-      console.log(reason + ": " + eventCounter[reason]);
-    }
-
+    if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r": Cookies.getJSON('ba').r += 1}); }   // flag instruction completion; no penalty if they'd refreshed before now
   }
 };
 timeline.push(instructions_block);
 
+if (SSI_ids[0] == 'skip') { all_trials.length = 1; }
 // build trial timeline (sub all_trials.length for 1 to debug)
-for(i = 0; i < 1; i += 1){
+for(i = 0; i < all_trials.length; i += 1){
   // video trial to display stimuli
   timeline.push({
     type: 'video',
@@ -187,6 +181,7 @@ for(i = 0; i < 1; i += 1){
     is_html: false,
     trial_ends_after_audio: true
   });
+  // feedback/score screen 
   timeline.push({
     type: 'single-stim',
     stimulus: function(){
@@ -207,6 +202,19 @@ for(i = 0; i < 1; i += 1){
   });
 }
 
+// ask about browser preference (you can check this against user_agent as another datapoint)
+var browserOptions = jsPsych.randomization.repeat(['Google Chrome', 'Mozilla Firefox', 'Microsoft Internet Exporer or Edge', 'Apple Safari', 'Opera'], 1);
+browserOptions.push("Other");
+
+var survey_block = {
+  type: "survey-multi-choice",
+  questions: ['What web browser do you commonly use?'],
+  options: [browserOptions],
+  required: [true]
+};
+timeline.push(survey_block)
+
+// debrief at study conclusion
 var debrief_block = {
   type: "text",
   text: function() {
@@ -223,7 +231,8 @@ timeline.push(debrief_block);
 // add global properties
 jsPsych.data.addProperties({
   psid: SSI_ids[0],
-  pid: SSI_ids[1]
+  pid: SSI_ids[1],
+  ua: window.navigator.userAgent
   // I think the rest can be derived post-hoc in the process of more granular data munging?
 });
 
