@@ -25,7 +25,7 @@ function kill(reason) {
     });
 }
 // if nothing passed just kill the script - don't waste our time
-if (SSI_ids[0] == null | SSI_ids[1] == null) { kill("SSI url variables not present, will not execute study."); }
+if (SSI_ids[0] == null || SSI_ids[1] == null) { kill("SSI url variables not present, will not execute study."); }
 
 // check for reload (if there's a cookie they've been here before [admittedly naive assumption])
 if( typeof Cookies.get().ba !== 'undefined' ) {
@@ -39,8 +39,8 @@ if( typeof Cookies.get().ba !== 'undefined' ) {
   if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r":0}); }
 }
 
-var cycles = 1                         // how many iterations per stimulus for proper response averaging
-var score = 0, accY = 100, accN = -50  // keeping score
+var cycles = 1;                        // how many iterations per stimulus for proper response averaging
+var score = 0, accY = 100, accN = -50; // keeping score
 
 // specify all stimuli and levels of related IVs (ps I sorta hate editing this, would rather see it in a spreadsheet?)
 var video_clips = [
@@ -135,8 +135,8 @@ var instructions_block = {
 };
 timeline.push(instructions_block);
 
-if (SSI_ids[0] == 'skip') { all_trials.length = 1; }
-// build trial timeline (sub all_trials.length for 1 to debug)
+if (SSI_ids[0] == 'skip') { all_trials.length = 1; } // to skip to end after 1 trial set urlvar psid='skip'
+// build trial timeline
 for(i = 0; i < all_trials.length; i += 1){
   // video trial to display stimuli
   timeline.push({
@@ -152,11 +152,11 @@ for(i = 0; i < all_trials.length; i += 1){
   timeline.push({
     type: 'single-stim',
     stimulus: function(){
-      var first = jsPsych.data.get().last(1).values()[0][0].first
+      var first = jsPsych.data.get().last(1).values()[0][0].first;
       if(first == "Firefox") {
-        return "{{ gamestatic('img/FirefoxFirst.png') }}"
+        return "{{ gamestatic('img/FirefoxFirst.png') }}";
       } else {
-        return "{{ gamestatic('img/ChromeFirst.png') }}"
+        return "{{ gamestatic('img/ChromeFirst.png') }}";
       }
     },
     is_html: false,
@@ -173,15 +173,15 @@ for(i = 0; i < all_trials.length; i += 1){
     stimulus: function(){
       var correct = jsPsych.data.get().last(1).values()[0].correct;
       if(correct){
-        return "{{ gamestatic('wav/pos.wav') }}"
+        return "{{ gamestatic('wav/pos.wav') }}";
       } else {
-        return "{{ gamestatic('wav/neg.wav') }}"   
+        return "{{ gamestatic('wav/neg.wav') }}";
       }
     },
     is_html: false,
     trial_ends_after_audio: true
   });
-  // feedback/score screen 
+  // feedback/score screen
   timeline.push({
     type: 'single-stim',
     stimulus: function(){
@@ -189,11 +189,11 @@ for(i = 0; i < all_trials.length; i += 1){
       if(correct){
         score += accY;
         jsPsych.data.addDataToLastTrial({ score: score });
-        return "<p>Correct trial: Your score is now +"+accY+" = "+score+"</p>"   
+        return "<p>Correct trial: Your score is now +"+accY+" = "+score+"</p>";
       } else {
         score += accN;
         jsPsych.data.addDataToLastTrial({ score: score });        
-        return "<p>Incorrect trial: Your score is now "+accN+" = "+score+"</p>"   
+        return "<p>Incorrect trial: Your score is now "+accN+" = "+score+"</p>";
       }
     },
     is_html: true,
@@ -212,7 +212,7 @@ var survey_block = {
   options: [browserOptions],
   required: [true]
 };
-timeline.push(survey_block)
+timeline.push(survey_block);
 
 // debrief at study conclusion
 var debrief_block = {
@@ -222,7 +222,7 @@ var debrief_block = {
     "<p>We're interested in knowing whether the browser you <i>thought</i> was loading the page affected how fast it <i>seemed</i> to you</p>" +
     "<br>" +
     "<p>At "+accY+" points for an accurate trial and "+accN+" for an error, out of a total of "+trials+" trials you scored "+score+" points</p>"  +
-    "<p>Please press any key to conclude - thank you for your participation!</p>"
+    "<p>Please press any key to conclude - thank you for your participation!</p>";
   },
   timing_post_trial: 2000
 };
@@ -256,22 +256,23 @@ jsPsych.init({
     // here check for events and kill the study if one occurred (ignore lead up to first trial)
     if (jsPsych.progress().current_trial_global > 0) {
       // check only entries for current trial
-      var events = jsPsych.data.getInteractionData().values().filter(function(el){return el.trial === jsPsych.progress().current_trial_global});
+      var events = jsPsych.data.getInteractionData().values().filter(function(el){return el.trial === jsPsych.progress().current_trial_global;});
       // array should be empty if they were good, if not give them the boot
       if (events.length > 0) {
+        var reason;
         switch (events[0].event) {
           case 'fullscreenexit':
-            var reason = "Exited full screen"; break;
+            reason = "Exited full screen"; break;
           case 'tab_switch':
-            var reason = "Browser tab changed"; break;
+            reason = "Browser tab changed"; break;
           case 'blur':
           case 'focus':
-            var reason = "Application focus changed"; break;            
+            reason = "Application focus changed"; break;
           case 'key_zoom_increase':
           case 'key_zoom_decrease':
           case 'mouse_zoom_increase':
           case 'mouse_zoom_decrease':
-            var reason = "Zoom altered"; break;
+            reason = "Zoom altered"; break;
         }
         kill(reason + ", will not continue study; disqualification.");
       }
