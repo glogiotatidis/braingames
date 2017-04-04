@@ -72,9 +72,9 @@ You'll need Python 3, virtualenv and sqlite3:
     - `cp  .env-example .env`
  5. Run the database migrations
     - `python ./manage.py migrate`
- 7. Start the server
+ 6. Start the server
     - `python manage.py runserver 0.0.0.0:8000`
- 8. Develop!
+ 7. Develop!
 
 Alternatively, you can use [Docker](http://docker.com/):
 
