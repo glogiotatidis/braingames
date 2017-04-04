@@ -39,7 +39,7 @@ if( typeof Cookies.get().ba !== 'undefined' ) {
   if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r":0}); }
 }
 
-var cycles = 1;                        // how many iterations per stimulus for proper response averaging
+var cycles = 3;                        // how many iterations per stimulus for proper response averaging
 var score = 0, accY = 100, accN = -50; // keeping score
 
 // specify all stimuli and levels of related IVs (ps I sorta hate editing this, would rather see it in a spreadsheet?)
