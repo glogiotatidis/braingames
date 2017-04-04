@@ -25,7 +25,7 @@ function kill(reason) {
     });
 }
 // if nothing passed just kill the script - don't waste our time
-if (SSI_ids[0] == null | SSI_ids[1] == null) { kill("SSI url variables not present, will not execute study."); }
+if (SSI_ids[0] == null || SSI_ids[1] == null) { kill("SSI url variables not present, will not execute study."); }
 
 // check for reload (if there's a cookie they've been here before [admittedly naive assumption])
 if( typeof Cookies.get().ba !== 'undefined' ) {
@@ -39,8 +39,8 @@ if( typeof Cookies.get().ba !== 'undefined' ) {
   if (SSI_ids[1] != 'test') { Cookies.set('ba', {"r":0}); }
 }
 
-var cycles = 1                         // how many iterations per stimulus for proper response averaging
-var score = 0, accY = 100, accN = -50  // keeping score
+var cycles = 3;                        // how many iterations per stimulus for proper response averaging
+var score = 0, accY = 100, accN = -50; // keeping score
 
 // specify all stimuli and levels of related IVs (ps I sorta hate editing this, would rather see it in a spreadsheet?)
 var video_clips = [
@@ -99,11 +99,10 @@ var all_trials = jsPsych.randomization.repeat(video_clips, cycles);  // specify 
 
 var timeline = [];                                                   // empty timeline .push all trials to it before .init to run study
 
-var trials = all_trials.length*cycles;
 var instructions_block = {
   type: 'instructions',
   pages: [   // "<p></p>",
-    "<p>Welcome to Shrub - a \"BrainGame\"</p>" +
+    "<h3>Thank you for your participation in this \"BrainGame\"</h3>" +
     "<p>BrainGames use research techniques from cognitive science<br>to better understand how our minds work when using the web</p>" +
     "<p>That understanding can improve web experiences by<br>tailoring them around data contributed through your participation</p>" +
     "<p>Left and right arrow keys navigate<br>back and forward through the instructions</p>",
@@ -126,7 +125,7 @@ var instructions_block = {
     "<p>Error tones are provided for feedback after each response<br>Get familiar with the correct and incorrect sounds below and adjust your volume:<br>" +
     "Correct: <audio controls=1><source src={{ gamestatic('wav/pos.wav') }} type='audio/wav'></audio><br>" +
     "Incorrect: <audio controls=2><source src={{ gamestatic('wav/neg.wav') }} type='audio/wav'></audio></p>" +
-    "<p>There are a total of "+trials+" trials to capture enough data for us to draw conclusions<br>At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+trials*accY+" points possible</p>" +
+    "<p>There are a total of "+all_trials.length+" trials to capture enough data for us to draw conclusions<br>At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+all_trials.length*accY+" points possible</p>" +
     "<p>The experiment begins beyond this final instruction screen, you will not be able to go backward from here</p>"
   ],
   on_finish: function() {
@@ -135,8 +134,8 @@ var instructions_block = {
 };
 timeline.push(instructions_block);
 
-if (SSI_ids[0] == 'skip') { all_trials.length = 1; }
-// build trial timeline (sub all_trials.length for 1 to debug)
+if (SSI_ids[0] == 'skip') { all_trials.length = 1; } // to skip to end after 1 trial set urlvar psid='skip'
+// build trial timeline
 for(i = 0; i < all_trials.length; i += 1){
   // video trial to display stimuli
   timeline.push({
@@ -152,11 +151,11 @@ for(i = 0; i < all_trials.length; i += 1){
   timeline.push({
     type: 'single-stim',
     stimulus: function(){
-      var first = jsPsych.data.get().last(1).values()[0][0].first
+      var first = jsPsych.data.get().last(1).values()[0][0].first;
       if(first == "Firefox") {
-        return "{{ gamestatic('img/FirefoxFirst.png') }}"
+        return "{{ gamestatic('img/FirefoxFirst.png') }}";
       } else {
-        return "{{ gamestatic('img/ChromeFirst.png') }}"
+        return "{{ gamestatic('img/ChromeFirst.png') }}";
       }
     },
     is_html: false,
@@ -173,15 +172,15 @@ for(i = 0; i < all_trials.length; i += 1){
     stimulus: function(){
       var correct = jsPsych.data.get().last(1).values()[0].correct;
       if(correct){
-        return "{{ gamestatic('wav/pos.wav') }}"
+        return "{{ gamestatic('wav/pos.wav') }}";
       } else {
-        return "{{ gamestatic('wav/neg.wav') }}"   
+        return "{{ gamestatic('wav/neg.wav') }}";
       }
     },
     is_html: false,
     trial_ends_after_audio: true
   });
-  // feedback/score screen 
+  // feedback/score screen
   timeline.push({
     type: 'single-stim',
     stimulus: function(){
@@ -189,11 +188,11 @@ for(i = 0; i < all_trials.length; i += 1){
       if(correct){
         score += accY;
         jsPsych.data.addDataToLastTrial({ score: score });
-        return "<p>Correct trial: Your score is now +"+accY+" = "+score+"</p>"   
+        return "<p>Correct trial: Your score is now +"+accY+" = "+score+"</p>";
       } else {
         score += accN;
         jsPsych.data.addDataToLastTrial({ score: score });        
-        return "<p>Incorrect trial: Your score is now "+accN+" = "+score+"</p>"   
+        return "<p>Incorrect trial: Your score is now "+accN+" = "+score+"</p>";
       }
     },
     is_html: true,
@@ -205,24 +204,70 @@ for(i = 0; i < all_trials.length; i += 1){
 // ask about browser preference (you can check this against user_agent as another datapoint)
 var browserOptions = jsPsych.randomization.repeat(['Google Chrome', 'Mozilla Firefox', 'Microsoft Internet Exporer or Edge', 'Apple Safari', 'Opera'], 1);
 browserOptions.push("Other");
-
 var survey_block = {
   type: "survey-multi-choice",
-  questions: ['What web browser do you commonly use?'],
+  questions: ['What web browser do you commonly use on a laptop or desktop computer?'],
   options: [browserOptions],
   required: [true]
 };
-timeline.push(survey_block)
+timeline.push(survey_block);
+
+// ask about demographics, but don't require (same as pilot)
+var genderOptions = jsPsych.randomization.repeat(['Male', 'Female'], 1); genderOptions.push("Other");
+var gender_block = {
+  type: "survey-multi-choice",
+  questions: ['What is your gender?'],
+  options: [genderOptions]
+};
+timeline.push(gender_block);
+
+var ageOptions = ['Under 15','15-17','18-20','21-24','25-29','30-34','35-39','40-44','45-49','50-54','55 or Older'];
+var age_block = {
+  type: "survey-multi-choice",
+  questions: ['What is your age?'],
+  options: [ageOptions]
+};
+timeline.push(age_block);
+
+var eduOptions = [
+  'High school incomplete or less',
+  'High school graduate or GED',
+  "Some college (including tech/vocational, some community college, associate's degree)",
+  "Four year college degree/bachelor's degree",
+  'Some postgraduate or professional schooling, no postgraduate degree',
+  "Postgraduate or professional degree, including master's, doctorate, medical or law"
+];
+var edu_block = {
+  type: "survey-multi-choice",
+  questions: ['What is the highest level of school you have completed or the highest degree you have received?'],
+  options: [eduOptions]
+};
+timeline.push(edu_block);
+
+var raceOptions = jsPsych.randomization.repeat([
+  'White',
+  'Asian or Asian-American',
+  'Black or African-American',
+  'Hispanic or Latin-American',
+  'Native Hawaiian/Other Pacific Islander',
+  'Native American/American Indian/Alaska Native'
+], 1);  
+var race_block = {
+  type: "survey-multi-choice",
+  questions: ['Which of the following describes your race?'],
+  options: [raceOptions]
+};
+timeline.push(race_block);
 
 // debrief at study conclusion
 var debrief_block = {
   type: "text",
   text: function() {
-    return "<p>The videos were edited strategically from the <b>same source</b> to be slower or faster on different trials</p>" +
+    return "<h1>Debriefing:</h1>" + "<p>The videos were edited strategically from the <b>same source</b> to be slower or faster on different trials</p>" +
     "<p>We're interested in knowing whether the browser you <i>thought</i> was loading the page affected how fast it <i>seemed</i> to you</p>" +
     "<br>" +
-    "<p>At "+accY+" points for an accurate trial and "+accN+" for an error, out of a total of "+trials+" trials you scored "+score+" points</p>"  +
-    "<p>Please press any key to conclude - thank you for your participation!</p>"
+    "<p>At "+accY+" points for an accurate trial and "+accN+" for an error, out of a total of "+all_trials.length+" trials you scored "+score+" points</p>"  +
+    "<p>Please press any key to conclude - thank you for your participation!</p>";
   },
   timing_post_trial: 2000
 };
@@ -256,22 +301,23 @@ jsPsych.init({
     // here check for events and kill the study if one occurred (ignore lead up to first trial)
     if (jsPsych.progress().current_trial_global > 0) {
       // check only entries for current trial
-      var events = jsPsych.data.getInteractionData().values().filter(function(el){return el.trial === jsPsych.progress().current_trial_global});
+      var events = jsPsych.data.getInteractionData().values().filter(function(el){return el.trial === jsPsych.progress().current_trial_global;});
       // array should be empty if they were good, if not give them the boot
       if (events.length > 0) {
+        var reason;
         switch (events[0].event) {
           case 'fullscreenexit':
-            var reason = "Exited full screen"; break;
+            reason = "Exited full screen"; break;
           case 'tab_switch':
-            var reason = "Browser tab changed"; break;
+            reason = "Browser tab changed"; break;
           case 'blur':
           case 'focus':
-            var reason = "Application focus changed"; break;            
+            reason = "Application focus changed"; break;
           case 'key_zoom_increase':
           case 'key_zoom_decrease':
           case 'mouse_zoom_increase':
           case 'mouse_zoom_decrease':
-            var reason = "Zoom altered"; break;
+            reason = "Zoom altered"; break;
         }
         kill(reason + ", will not continue study; disqualification.");
       }
