@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Startup Concept</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div id="active-game">
+
+      <div class="exp-instruction" style="z-index:1">
+          Please open the »Web Browser« application.
+          New instructions will appear automatically afterwards.
+      </div>
+
+      <div class="desktop-icon"><span>Web Browser</span></div>
+
+      <div id="w1" class="win">
+          <div id="s1" class="startframe">
+              <div id="t1" class="toolbar"></div>
+          </div>
+      </div>
+
+      <div id="taskbar">
+          <div class="startbtn"></div>
+          <div class="launch" id="l1" title="Web Browser"></div>
+      </div>
+
+      <button id="end-trial"></button>
+    <div/>
+
+    <script type="text/javascript">
+      var js = document.createElement("script");
+
+      js.type = "text/javascript";
+      js.src = jsPsych.currentTrial().data.js_url;
+
+      document.body.appendChild(js);
+    </script>
+</body>
+
+</html>

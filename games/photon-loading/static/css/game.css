@@ -1,0 +1,190 @@
+#active-game {
+    font-family: sans-serif;
+    background-image: url('../img/desktop.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #015368;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    /* prevent text selection */
+      -webkit-user-select: none;
+       -khtml-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+}
+
+#active-game.end {
+  transition: background .5s linear, opacity .5s linear;
+  background-color: #FFFFFF;
+  background-image: none;
+  opacity: 0;
+}
+
+#active-game  a {
+    color: #fff
+}
+
+.win,
+.win * {
+    opacity: 0;
+}
+
+.win,
+.startframe {
+    width: 800px;
+    height: 600px;
+}
+
+.win {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background-color: #fff;
+    border: 1px solid dodgerblue;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+#w1 {
+    left: 50px;
+    top: 50px;
+}
+
+#w2 {
+    left: 80px;
+    top: 80px;
+}
+
+.startframe {
+    background-color: #fff;
+    background-image: url('../img/search.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 75%;
+}
+
+.toolbar {
+    height: 75px;
+    background-image: url('../img/tb3.png'), url('../img/tb1.png'), url('../img/tb2.png');
+    background-repeat: no-repeat, no-repeat, repeat-x;
+    background-position: top right, top left, top;
+    background-size: auto 90%;
+    transition: opacity 0.2s ease;
+}
+
+#taskbar {
+    width: 100%;
+    height: 40px;
+    background-color: #000;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    color: #fff;
+    float: left;
+    z-index: 999;
+}
+
+#taskbar div.launch {
+    width: 40px;
+    height: 37px;
+    float: left;
+    font-size: 26px;
+    line-height: 40px;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    cursor: default;
+    margin-left: 1px;
+    border-bottom: 3px solid transparent;
+    background-image: url('../img/browser.png');
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: 4px;
+}
+
+#taskbar div.launch:hover {
+    background-color: #333;
+}
+
+#taskbar div.launch:active {
+    background-color: #000;
+}
+
+#taskbar div.launch.active {
+    height: 37px;
+    background-color: #555;
+    border-bottom: 3px solid dodgerblue;
+}
+
+.startbtn {
+    float: left;
+    height: 40px;
+    width: 353px;
+    background-image: url('../img/taskbar.png');
+    background-size: auto 100%;
+    margin-right: 4px;
+}
+
+.hidden {
+    display: none;
+}
+
+.desktop-icon {
+    position: absolute;
+    left: 6px;
+    top: 15px;
+    width: 74px;
+    height: 70px;
+    background-color: transparent;
+    background-image: url('../img/browser.png');
+    background-size: 45px;
+    background-repeat: no-repeat;
+    background-position: center 0px;
+    border: 1px solid transparent;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    color: #eee;
+    text-shadow: 1px 1px 1px #000;
+    text-align: center;
+    cursor: default !important;
+}
+
+.desktop-icon:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6)
+}
+
+.desktop-icon span {
+    position: absolute;
+    bottom: 3px;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+#end-trial {
+  display: none;
+}
+
+#navigation {
+  display: none;
+}
+
+.exp-instruction {
+  width: 20vw;
+  min-width: 500px;
+  padding: 20px;
+  top: 10px;
+  right: 10px;
+  color: #fff;
+  position: absolute;
+  z-index: 99999;
+  background-color: rgba(0,0,0,.8);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+}
