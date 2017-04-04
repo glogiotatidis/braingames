@@ -99,7 +99,6 @@ var all_trials = jsPsych.randomization.repeat(video_clips, cycles);  // specify 
 
 var timeline = [];                                                   // empty timeline .push all trials to it before .init to run study
 
-var trials = all_trials.length*cycles;
 var instructions_block = {
   type: 'instructions',
   pages: [   // "<p></p>",
@@ -126,7 +125,7 @@ var instructions_block = {
     "<p>Error tones are provided for feedback after each response<br>Get familiar with the correct and incorrect sounds below and adjust your volume:<br>" +
     "Correct: <audio controls=1><source src={{ gamestatic('wav/pos.wav') }} type='audio/wav'></audio><br>" +
     "Incorrect: <audio controls=2><source src={{ gamestatic('wav/neg.wav') }} type='audio/wav'></audio></p>" +
-    "<p>There are a total of "+trials+" trials to capture enough data for us to draw conclusions<br>At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+trials*accY+" points possible</p>" +
+    "<p>There are a total of "+all_trials.length+" trials to capture enough data for us to draw conclusions<br>At "+accY+" points for an accurate trial and "+accN+" for an error, there is a total of "+all_trials.length*accY+" points possible</p>" +
     "<p>The experiment begins beyond this final instruction screen, you will not be able to go backward from here</p>"
   ],
   on_finish: function() {
@@ -267,7 +266,7 @@ var debrief_block = {
     return "<h1>Debriefing:</h1>" + "<p>The videos were edited strategically from the <b>same source</b> to be slower or faster on different trials</p>" +
     "<p>We're interested in knowing whether the browser you <i>thought</i> was loading the page affected how fast it <i>seemed</i> to you</p>" +
     "<br>" +
-    "<p>At "+accY+" points for an accurate trial and "+accN+" for an error, out of a total of "+trials+" trials you scored "+score+" points</p>"  +
+    "<p>At "+accY+" points for an accurate trial and "+accN+" for an error, out of a total of "+all_trials.length+" trials you scored "+score+" points</p>"  +
     "<p>Please press any key to conclude - thank you for your participation!</p>";
   },
   timing_post_trial: 2000
