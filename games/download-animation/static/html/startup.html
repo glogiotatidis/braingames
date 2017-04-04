@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <!-- <div id="stat">Loading...</div> -->
+  <div id="video-wrapper">
+    <div id="download-now" class="interaction"></div>
+    <div id="save-file" class="interaction"></div>
+    <div id="bookmark" class="interaction">
+      <div class="hint hidden">bookmark</div>
+    </div>
+    <div id="downloads" class="interaction hidden">
+      <div class="hint hidden">downloads</div>
+    </div>
+    <div id="library" class="interaction">
+      <div class="hint hidden">library</div>
+    </div>
+    <div id="library-doorhanger"></div>
+    <div id="download-doorhanger"></div>
+    <video id="video-test" preload="auto" width="1366" height="768"></video>
+  <div>
+
+  <script type="text/javascript">
+    let vid = document.getElementById('video-test');
+    // var status = document.getElementById('stat');
+    let download_now = document.getElementById('download-now');
+    let save_file = document.getElementById('save-file');
+    let video_wrapper = document.getElementById('video-wrapper');
+    let bookmark = document.getElementById('bookmark');
+    let library = document.getElementById('library');
+    let downloads = document.getElementById('downloads');
+
+    function oneTime(node, type, callback) {
+    	node.addEventListener(type, function(e) {
+    		e.target.removeEventListener(e.type, arguments.callee);
+    		return callback(e);
+    	});
+    }
+
+    // pre-load entire video
+    let req = new XMLHttpRequest();
+    req.open('GET', jsPsych.currentTrial().data.video_url, true);
+    req.responseType = 'blob';
+
+    req.onload = function() {
+      if (this.status === 200) {
+        let videoBlob = this.response;
+        let v = URL.createObjectURL(videoBlob);
+        vid.src = v;
+        // stat.classList.add('hidden');
+        // vid.classList.remove('hidden');
+        // play.classList.remove('hidden');
+      }
+    };
+
+    req.onerror = () => {
+        // stat.innerText = 'Could not load experiment';
+    };
+
+    req.send();
+
+    let showHint = function (e)  {
+      this.children[0].classList.remove('hidden');
+    };
+
+    let hideHint = function () {
+      this.children[0].classList.add('hidden');
+    };
+
+    bookmark.addEventListener('mouseover', showHint);
+    library.addEventListener('mouseover', showHint);
+    downloads.addEventListener('mouseover', showHint);
+    bookmark.addEventListener('mouseout', hideHint);
+    library.addEventListener('mouseout', hideHint);
+    downloads.addEventListener('mouseout', hideHint);
+
+    oneTime(download_now, 'click', () => {
+      download_now.classList.add('hidden');
+      vid.currentTime = 1;
+    });
+
+    oneTime(save_file, 'click', () => {
+      save_file.classList.add('hidden');
+      vid.play();
+      setTimeout(function() {
+        vid.pause();
+        downloads.classList.remove('hidden');
+        vid.currentTime = 6;
+      }, 3500);
+    });
+
+    oneTime(downloads, 'click', function() {
+      vid.play();
+      setTimeout(function(){
+        vid.pause();
+        vid.currentTime = 7;
+        video_wrapper.addEventListener('click', function(e) {
+          if (e.target.id != 'download-doorhanger') {
+            video_wrapper.removeEventListener('click', arguments.callee);
+            document.getElementById('download-doorhanger').classList.add('hidden');
+            vid.play();
+            setTimeout(function() {
+              vid.pause();
+              vid.currentTime = 8;
+            }, 1000);
+          }
+        });
+      }, 900);
+    });
+
+    oneTime(bookmark, 'click', function(){
+      vid.play();
+      setTimeout(function() {
+        vid.pause();
+        vid.currentTime = 11;
+      }, 2300);
+    });
+
+    oneTime(library, 'click', function(){
+      vid.play();
+      setTimeout(function() {
+        vid.pause();
+        vid.currentTime = 12;
+        video_wrapper.addEventListener('click', function(e) {
+          if (e.target.id != 'library-doorhanger') {
+            document.getElementById('library-doorhanger').classList.add('hidden');
+            video_wrapper.removeEventListener('click', arguments.callee);
+            vid.play();
+            setTimeout(function() {
+              vid.pause(); // Video is finished
+            }, 1500);
+          }
+        });
+      }, 800);
+    });
+
+
+  </script>
+</body>
+
+</html>
