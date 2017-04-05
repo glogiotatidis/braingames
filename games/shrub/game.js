@@ -221,11 +221,21 @@ var gender_block = {
 };
 timeline.push(gender_block);
 
-var ageOptions = ['Under 15','15-17','18-20','21-24','25-29','30-34','35-39','40-44','45-49','50-54','55 or Older'];
 var age_block = {
-  type: "survey-multi-choice",
-  questions: ['What is your age?'],
-  options: [ageOptions]
+  timeline: [{
+    type: "survey-text",
+    questions: ['What is your age? (Please use whole numbers.)']
+  }],
+  loop_function: function(data){
+    var input = JSON.parse(jsPsych.data.get().last(1).values()[0].responses).Q0;
+    // accept only numbers or nothing (permit non-response but reject all non-empty strings)
+    if(input == "") { return false;}
+    if(isNaN(parseInt(input))) {
+      return true;
+    } else {
+      return false;
+  }
+}
 };
 timeline.push(age_block);
 
