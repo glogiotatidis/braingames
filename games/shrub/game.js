@@ -206,7 +206,7 @@ var browserOptions = jsPsych.randomization.repeat(['Google Chrome', 'Mozilla Fir
 browserOptions.push("Other");
 var survey_block = {
   type: "survey-multi-choice",
-  questions: ['What web browser do you commonly use on a laptop or desktop computer?'],
+  questions: ['What is your preferred web browser to use on a laptop or desktop computer?'],
   options: [browserOptions],
   required: [true]
 };
