@@ -134,7 +134,7 @@ var instructions_block = {
 };
 timeline.push(instructions_block);
 
-if (SSI_ids[0] == 'skip') { all_trials.length = 1; } // to skip to end after 1 trial set urlvar psid='skip'
+if (SSI_ids[0].substr(0,4) == 'skip') { all_trials.length = 1; } // to skip to end after 1 trial set urlvar psid='skip<identifier>'
 // build trial timeline
 for(i = 0; i < all_trials.length; i += 1){
   // video trial to display stimuli
