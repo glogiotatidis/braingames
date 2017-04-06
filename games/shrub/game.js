@@ -107,8 +107,9 @@ var instructions_block = {
     "<p>That understanding can improve web experiences by<br>tailoring them around data contributed through your participation</p>" +
     "<p>Left and right arrow keys navigate<br>back and forward through the instructions</p>",
 
-    "<p><strong>Please do NOT do any of the following things,<br>or you will be disqualified to prevent confounding results:</strong></p>" +
-    "<ul><li>Hit ESC to exit fullscreen mode</li><li>Switch tabs or programs during the procedure</li><li>Zoom in or out</li><li>Reload the page once you have begun trials</li></ul>",
+    "<p><strong>Please do NOT do any of the following things,<br>or you will be disqualified to prevent invalidating results:</strong></p>" +
+    "<ul><li>Hit ESC to exit fullscreen mode</li><li>Switch tabs or programs during the procedure</li><li>Zoom in or out</li><li>Reload the page once you have begun trials</li></ul>" +
+    "<p>You will be taken out of fullscreen mode after completing the study</p>",
 
     "<p>On each trial of this experiment you will see two video clips of<br>web pages loading back-to-back in <b>different browsers</b></p>" +
     "<p>Please pay close attention to how quickly the two pages load in the clips -<br>one browser <i>may</i> load the page more quickly than the other</p>",
@@ -119,7 +120,7 @@ var instructions_block = {
     "<p><i>Sometimes</i> there is no difference, though<br>That option is <u>also</u> available to respond with</p>",
     
     "<p>Rest your index fingers on the 'F' and 'J' keys and your thumbs on the space bar</p>" +
-    "<p>Press 'f' if the 1st clip loaded faster, 'j' if the 2nd clip loaded faster,<br>or space for the trials where the clips play at the same speed</p>" +
+    "<p>Press 'f' if the 1st clip loaded faster, 'j' if the 2nd clip loaded faster,<br>or space for the trials where the clips play at the same speed<br>(Answer screens remind you of the exact keys)</p>" +
     "<img src='{{ gamestatic('img/instAnswer.png') }}'></img> " + " <img src='{{ gamestatic('img/keyhands.jpg') }}'></img>" + "<p>Key responses keep the trials moving along quickly</p>",
 
     "<p>Error tones are provided for feedback after each response<br>Get familiar with the correct and incorrect sounds below and adjust your volume:<br>" +
@@ -134,7 +135,7 @@ var instructions_block = {
 };
 timeline.push(instructions_block);
 
-if (SSI_ids[0] == 'skip') { all_trials.length = 1; } // to skip to end after 1 trial set urlvar psid='skip'
+if (SSI_ids[0].substr(0,4) == 'skip') { all_trials.length = 1; } // to skip to end after 1 trial set urlvar psid='skip<identifier>'
 // build trial timeline
 for(i = 0; i < all_trials.length; i += 1){
   // video trial to display stimuli
@@ -206,7 +207,7 @@ var browserOptions = jsPsych.randomization.repeat(['Google Chrome', 'Mozilla Fir
 browserOptions.push("Other");
 var survey_block = {
   type: "survey-multi-choice",
-  questions: ['What web browser do you commonly use on a laptop or desktop computer?'],
+  questions: ['What is your preferred web browser to use on a laptop or desktop computer?'],
   options: [browserOptions],
   required: [true]
 };
